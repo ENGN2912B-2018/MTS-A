@@ -1,1 +1,0 @@
-/gpfs/runtime/opt/gcc/7.2/bin/g++   -std=c++11 -pthread  -rdynamic CMakeFiles/mainExecutable.dir/main.cpp.o  -o mainExecutable src/libmainLibrary.a -lboost_filesystem -lboost_iostreams -lboost_system -lboost_regex 

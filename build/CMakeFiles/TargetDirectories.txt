@@ -1,6 +1,0 @@
-/users/guest183/scratch/assignments/Group Assignment/Project/build/CMakeFiles/edit_cache.dir
-/users/guest183/scratch/assignments/Group Assignment/Project/build/CMakeFiles/rebuild_cache.dir
-/users/guest183/scratch/assignments/Group Assignment/Project/build/CMakeFiles/mainExecutable.dir
-/users/guest183/scratch/assignments/Group Assignment/Project/build/src/CMakeFiles/rebuild_cache.dir
-/users/guest183/scratch/assignments/Group Assignment/Project/build/src/CMakeFiles/edit_cache.dir
-/users/guest183/scratch/assignments/Group Assignment/Project/build/src/CMakeFiles/mainLibrary.dir
