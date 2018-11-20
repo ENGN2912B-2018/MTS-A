@@ -7,10 +7,10 @@ using boost::asio::ip::tcp;
 
 class Server{
 
-public:
+  public:
     Server(boost::asio::io_service& io_service, short port);
 
-private:
+  private:
     void do_accept();
 
     tcp::acceptor acceptor_;
