@@ -1,12 +1,10 @@
 #pragma once
 
-#include <thread>              // for ???
+#include <deque>               // for deque
 #include <string>              // for string
 #include <cstring>             // for strlen
-#include <deque>               // for deque
 #include <cstddef>             // for size_t
 #include <boost/asio.hpp>      // for boost::asio
-#include <boost/bind.hpp>
 
 using std::deque;
 using std::string;
@@ -39,14 +37,14 @@ typedef deque<message> message_queue;
 // however, I am working on changing this to fufill our needs
 
 
-/// A class representing our
+/// A class representing the client of our application.
 class Client {
   public:
     //= Constructor =============================================================
-    /// Constructs Client with an io_service for writing and iterator for finding the endpoint
+    /// Constructs Client with an io_service for writing and iterator for finding the endpoint.
     Client(io_service& io_service, resolver_iterator endpoint_iterator);
 
-    //= Operations =============================================================
+    //= Public Operations =============================================================
     /// Sends a message to the server.
     void write(const message& msg);
 
@@ -54,6 +52,7 @@ class Client {
     void close();
 
   private:
+    //= Private Operations =============================================================
     /// Performs the actual 'send message' operation.
     void do_write();
 
@@ -64,7 +63,9 @@ class Client {
     void do_connect(resolver_iterator endpoint_iterator);
 
     //= Member Variables =============================================================
-    response res_msg_;         // store responses from server
+    // TODO(la): this is currently necessary for some reason?
+    char res_msg_[1024];   // stores responses from server
+
     boost_socket socket_;      // socket for sending & receiving messages
     message_queue queue_;      // queue for sending message
     io_service &io_service_;   // io_service for socket
