@@ -26,3 +26,16 @@ Source code is currently kept in the `src` directory and the file structure will
   - Task management: both Luis and Yang would work on this task but Luis is the lead.
 * *Week of December 5th*: Implement more complex network structures that can navigate large user traffic while maintaining high speed and high quality services.
   - Task management: both Luis and Yang would work on this task.
+
+## Backlog
+* move client and server files into their own folders and namespaces
+* Use QT or boost to handle multithreading instead of using <thread>.
+* Implement a ways to shutdown the server in real-time.
+
+* Implement methods that allows us to exchange files between the server and the client, not just strings.
+
+* Design general interface for compression algorithms.
+* Implement the multithreaded wavelet transform algorithm for JPEG.
+* Implement real-time image reconstruction  method for the wavelet transform algorithm
+* Design GUI application interface for clients
+* Integrate client application with networking structure to allow for image upload and download

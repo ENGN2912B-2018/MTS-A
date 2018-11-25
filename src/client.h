@@ -36,7 +36,6 @@ typedef deque<message> message_queue;
 // NOTE(la): this code is based of a Boost official "chat" tutorial
 // however, I am working on changing this to fufill our needs
 
-
 /// A class representing the client of our application.
 class Client {
   public:
@@ -63,7 +62,6 @@ class Client {
     void do_connect(resolver_iterator endpoint_iterator);
 
     //= Member Variables =============================================================
-    // TODO(la): this is currently necessary for some reason?
     char res_msg_[1024];   // stores responses from server
 
     boost_socket socket_;      // socket for sending & receiving messages

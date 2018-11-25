@@ -32,8 +32,6 @@ void Client::do_write() {
   });
 }
 
-
-
 void Client::do_read() {
   message str = queue_.front();
   // here we have to use async_read_some, because async_read completition
