@@ -1,6 +1,8 @@
 #include <iostream>           // for std::cout
 #include "server.h"
 
+namespace server {
+
 // session methods
 
 Session::Session(boost_socket socket) : socket_(std::move(socket)) { }
@@ -11,15 +13,16 @@ void Session::start() {
 
 void Session::do_read() {
   auto self(shared_from_this());
-  socket_.async_read_some(buffer(data_, max_length), [this, self](error_code ec, size_t length) {
+  socket_.async_read_some(buffer(data_, 1024), [this, self](error_code ec, size_t length) {
     if (!ec) {
       std::cout << "server recieved message: " << data_<< std::endl;
-      do_write(length);
+      receive_queue_.push_back(data_);
+      do_write();
     }
   });
 }
 
-void Session::do_write(size_t length) {
+void Session::do_write() {
   auto self(shared_from_this());
   async_write(socket_, buffer("agknowledged!", strlen("agknowledged!")), [this, self](error_code ec, size_t len) {
     if (!ec) {
@@ -35,6 +38,7 @@ Server::Server(io_service& io_service, short port) :
   acceptor_(io_service, tcp::endpoint(tcp::v4(), port)),
   socket_(io_service) { do_accept(); }
 
+
 void Server::do_accept() {
   acceptor_.async_accept(socket_, [this](error_code ec) {
     if (!ec) {
@@ -45,3 +49,5 @@ void Server::do_accept() {
     do_accept();
   });
 }
+
+}  // namespaces server

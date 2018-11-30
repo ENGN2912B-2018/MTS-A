@@ -16,16 +16,13 @@ using namespace boost::asio;
 using boost::asio::ip::tcp;
 using boost::system::error_code;
 
+typedef deque<const char*> message_queue;
 typedef boost::asio::ip::tcp::acceptor acceptor;
 typedef boost::asio::ip::tcp::socket boost_socket;
 typedef boost::asio::ip::tcp::resolver::iterator resolver_iterator;
 
+namespace server {
 
-// TODO(la): depending on our later representation of message values we should
-// change these. Or we could this templated Message class and require using that.
-typedef char* message;
-typedef char* response;
-typedef deque<message> message_queue;
 
 /// A class representing a clients Session.
 /// Each session is responsible for communicating with a singular client.
@@ -38,19 +35,22 @@ class Session : public std::enable_shared_from_this<Session> {
     //= Public Operations ======================================================
     /// Starts the session.
     void start();
+
   private:
     //= Private Operations =====================================================
     /// Reads from the socket.
     void do_read();
 
     /// Writes at most length bytes of the current the buffer to the socket.
-    void do_write(size_t length);
+    void do_write();
 
     //= Member Variables =======================================================
-    boost_socket socket_;          // the socket we are using for communication
-    enum { max_length = 1024 };    // max size used for messages
-    char data_[max_length];        // data buffer used for sending messages
+    char data_[1024];               // data buffer used for sending messages
+    boost_socket socket_;           // the socket we are using for communication
+    message_queue send_queue_;      // queue for sending message
+    message_queue receive_queue_;   // queue for received messages
 };
+
 
 
 
@@ -72,3 +72,5 @@ class Server {
     acceptor acceptor_;     // an object that accepts incoming connections
     boost_socket socket_;   // the socket we are using for communication
 };
+
+}  // namespace server

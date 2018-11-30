@@ -1,15 +1,23 @@
 #include <iostream>
 #include <string>
+#include <vector>
 #include <thread>
 #include <chrono>
+#include <cassert>
 #include <boost/asio.hpp>
 #include <boost/bind.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/array.hpp>
 
-#include "client.h"
-#include "server.h"
+#include "image.h"
+#include "client/client.h"
+#include "server/server.h"
 
+using namespace image;
+using namespace client;
+using namespace server;
+
+using std::vector;
 using boost::asio::ip::tcp;
 
 void runClient() {
@@ -51,6 +59,29 @@ void runServer() {
 
 }
 
+void testImage() {
+  vector<vector<unsigned>> img = readImage("../images/feep.pgm");
+  vector<vector<double>> coeff = toCoefficients(img);
+
+  assert(img.size() == 7);
+  assert(img[0].size() == 24);
+  assert(coeff.size() == 7);
+  assert(coeff[0].size() == 24);
+
+  vector<unsigned char> ser = serialize(coeff);
+  vector<vector<double>> copy = deserialize(ser);
+
+  assert(copy.size() == 7);
+  assert(copy[0].size() == 24);
+
+  for (int i = 0; i < 7; i++) {
+    for (int j = 0; j < 24; j++) {
+      assert(coeff[i][j] == copy[i][j]);
+    }
+    std::cout << std::endl;
+  }
+}
+
 
 
 int main() {
@@ -59,5 +90,6 @@ int main() {
 
   thread1.join();
   thread2.join();
+  testImage();
   return 0;
 }

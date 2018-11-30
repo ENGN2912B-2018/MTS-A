@@ -2,29 +2,24 @@
 
 #include <deque>               // for deque
 #include <string>              // for string
+#include <vector>              // for vector
 #include <cstring>             // for strlen
 #include <cstddef>             // for size_t
 #include <boost/asio.hpp>      // for boost::asio
 
 using std::deque;
 using std::string;
+using std::vector;
 using std::size_t;
 
 using namespace boost::asio;
 using boost::system::error_code;
 
+typedef deque<const char *> message_queue;
 typedef boost::asio::ip::tcp::socket boost_socket;
 typedef boost::asio::ip::tcp::resolver::iterator resolver_iterator;
 
 
-// TODO(la): depending on our later representation of message values we should
-// change these. Or we could this templated Message class and require using that.
-typedef char* message;
-typedef char* response;
-typedef deque<message> message_queue;
-
-
-// TODO(la): namespaces?
 // TODO(la): seperate openning socket from creation?
 // TODO(la): currently this client has a 'read()' private member function. So,
 // what this class does with a message is fixed. Could add a 'Handler/Listener'
@@ -32,9 +27,7 @@ typedef deque<message> message_queue;
 // just pass the value along
 
 
-
-// NOTE(la): this code is based of a Boost official "chat" tutorial
-// however, I am working on changing this to fufill our needs
+namespace client {
 
 /// A class representing the client of our application.
 class Client {
@@ -45,7 +38,7 @@ class Client {
 
     //= Public Operations =============================================================
     /// Sends a message to the server.
-    void write(const message& msg);
+    void write(const char* msg);
 
     /// Closes the socket.
     void close();
@@ -62,9 +55,12 @@ class Client {
     void do_connect(resolver_iterator endpoint_iterator);
 
     //= Member Variables =============================================================
-    char res_msg_[1024];   // stores responses from server
+    boost_socket socket_;           // socket for sending & receiving messages
+    io_service &io_service_;        // io_service for socket
 
-    boost_socket socket_;      // socket for sending & receiving messages
-    message_queue queue_;      // queue for sending message
-    io_service &io_service_;   // io_service for socket
+    char res_msg_[1024];            // stores responses from server
+    message_queue send_queue_;      // queue for sending message
+    message_queue receive_queue_;   // queue for received messages
 };
+
+}  // namespace client
