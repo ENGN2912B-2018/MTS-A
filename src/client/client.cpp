@@ -24,8 +24,8 @@ void Client::close() {
 // private members below
 
 void Client::do_write() {
-  const char* str = send_queue_.front();
-  async_write(socket_, buffer(str, strlen(str)), [this](error_code ec, size_t len) {
+  const char* msg = send_queue_.front();
+  async_write(socket_, buffer(msg, BUFFER_SIZE), [this](error_code ec, size_t len) {
     if (!ec) {
       send_queue_.pop_front();
       if (!send_queue_.empty()) do_write();
@@ -35,7 +35,7 @@ void Client::do_write() {
 
 void Client::do_read() {
   // here we have to use async_read_some, because async_read completition conditions aren't flexible
-  socket_.async_read_some(buffer(res_msg_, 1024), [this](error_code ec, size_t len) {
+  socket_.async_read_some(buffer(res_msg_, BUFFER_SIZE), [this](error_code ec, size_t len) {
     if (!ec) {
       receive_queue_.push_back(res_msg_);
       std::cout << "client received message: " << res_msg_ << std::endl;

@@ -29,6 +29,8 @@ typedef boost::asio::ip::tcp::resolver::iterator resolver_iterator;
 
 namespace client {
 
+const int BUFFER_SIZE = 8192;
+
 /// A class representing the client of our application.
 class Client {
   public:
@@ -58,7 +60,7 @@ class Client {
     boost_socket socket_;           // socket for sending & receiving messages
     io_service &io_service_;        // io_service for socket
 
-    char res_msg_[1024];            // stores responses from server
+    char res_msg_[BUFFER_SIZE];     // stores responses from server
     message_queue send_queue_;      // queue for sending message
     message_queue receive_queue_;   // queue for received messages
 };

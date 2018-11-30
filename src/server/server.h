@@ -3,6 +3,7 @@
 #include <deque>               // for deque
 #include <memory>              // for enable_shared_from_this
 #include <string>              // for string
+#include <vector>              // for vector
 #include <cstring>             // for strlen
 #include <cstddef>             // for size_t
 #include <boost/asio.hpp>      // for boost::asio
@@ -10,6 +11,7 @@
 
 using std::deque;
 using std::string;
+using std::vector;
 using std::size_t;
 
 using namespace boost::asio;
@@ -23,6 +25,7 @@ typedef boost::asio::ip::tcp::resolver::iterator resolver_iterator;
 
 namespace server {
 
+const int BUFFER_SIZE = 8192;
 
 /// A class representing a clients Session.
 /// Each session is responsible for communicating with a singular client.
@@ -45,7 +48,7 @@ class Session : public std::enable_shared_from_this<Session> {
     void do_write();
 
     //= Member Variables =======================================================
-    char data_[1024];               // data buffer used for sending messages
+    char data_[BUFFER_SIZE];        // data buffer used for sending messages
     boost_socket socket_;           // the socket we are using for communication
     message_queue send_queue_;      // queue for sending message
     message_queue receive_queue_;   // queue for received messages

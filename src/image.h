@@ -15,26 +15,6 @@ using std::ofstream;
 
 namespace image {
 
-/// Reads the specified input file and writes the contents to the specified
-/// output file.
-void writeImage(string inputFilename, string outputFilename) {
-  ifstream input(inputFilename, ios::in | ios::binary);
-  ofstream output(outputFilename, ios::out | ios::binary);
-
-  assert(input.is_open());
-  assert(output.is_open());
-
-  char buffer[1024];
-  while (input.read(buffer, sizeof(buffer))) {
-    output.write(buffer, input.gcount());
-  }
-
-  input.close();
-  output.close();
-}
-
-
-
 /// Reads a PGM file from a filename and stores the contents as a vector
 /// of vectors
 vector<vector<unsigned>> readImage(const string &filename) {
@@ -83,7 +63,7 @@ vector<vector<double>> toCoefficients(const vector<vector<unsigned>> img) {
 
 /// Converts a vector of characters to a 2d grid of coefficients.
 /// The dimensions are appended at the front of the character stream.
-vector<vector<double>> deserialize(vector<unsigned char> &val) {
+vector<vector<double>> deserialize(vector<char> &val) {
   unsigned width;
   unsigned height;
   memcpy(&width, &val.at(0), sizeof(unsigned));
@@ -106,14 +86,14 @@ vector<vector<double>> deserialize(vector<unsigned char> &val) {
 
 
 /// Converts a grid of coefficients to a vector of characters.
-vector<unsigned char> serialize(vector<vector<double>> &coeff) {
-  vector<unsigned char> converted;
+vector<char> serialize(vector<vector<double>> &coeff) {
+  vector<char> converted;
 
   unsigned height = coeff.size();
   unsigned width = coeff[0].size();
 
-  unsigned char* width_ptr = reinterpret_cast<unsigned char*>(&width);
-  unsigned char* height_ptr = reinterpret_cast<unsigned char*>(&height);
+  char* width_ptr = reinterpret_cast<char*>(&width);
+  char* height_ptr = reinterpret_cast<char*>(&height);
   for (size_t i = 0; i < sizeof(unsigned); i++) converted.push_back(width_ptr[i]);
   for (size_t i = 0; i < sizeof(unsigned); i++) converted.push_back(height_ptr[i]);
 
@@ -121,7 +101,7 @@ vector<unsigned char> serialize(vector<vector<double>> &coeff) {
   for (int i = 0; i < coeff.size(); i++) {
     for (int j = 0; j < coeff[i].size(); j++) {
       double v= coeff[i][j];
-      unsigned char* ptr = reinterpret_cast<unsigned char*>(&v);
+      char* ptr = reinterpret_cast<char*>(&v);
       for (size_t k = 0; k < sizeof(double); k++) converted.push_back(ptr[k]);
     }
   }

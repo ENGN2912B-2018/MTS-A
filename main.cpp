@@ -41,6 +41,12 @@ void runClient() {
     c.write("Hello World");
     c.write("How are you?");
     c.write("Why don't I get a response?");
+
+    // send image over (1352 bytes to send)
+    //vector<vector<unsigned>> img = readImage("../images/feep.pgm");
+    //vector<vector<double>> coeff = toCoefficients(img);
+    //vector<char> ser = serialize(coeff);
+    //c.write(ser.data());
     t.join();
   } catch (std::exception& e) {
     std::cerr << e.what() << std::endl;
@@ -54,11 +60,13 @@ void runServer() {
     Server s(io_service, 8008);
     io_service.run();
   } catch (std::exception e) {
-    std::cerr << e.what() << std::endl;
+   std::cerr << e.what() << std::endl;
   }
 
 }
 
+
+/// test serialization/deserialization works
 void testImage() {
   vector<vector<unsigned>> img = readImage("../images/feep.pgm");
   vector<vector<double>> coeff = toCoefficients(img);
@@ -68,9 +76,10 @@ void testImage() {
   assert(coeff.size() == 7);
   assert(coeff[0].size() == 24);
 
-  vector<unsigned char> ser = serialize(coeff);
+  vector<char> ser = serialize(coeff);
   vector<vector<double>> copy = deserialize(ser);
 
+  std::cout << ser.size() << std::endl;
   assert(copy.size() == 7);
   assert(copy[0].size() == 24);
 
@@ -90,6 +99,5 @@ int main() {
 
   thread1.join();
   thread2.join();
-  testImage();
   return 0;
 }
