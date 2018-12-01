@@ -4,10 +4,14 @@
 #include <thread>
 #include <chrono>
 #include <cassert>
+#include <fstream>
+#include <sstream>
+#include <cmath>
 #include <boost/asio.hpp>
 #include <boost/bind.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/array.hpp>
+#define pi 3.1415926535
 
 #include "image.h"
 #include "client/client.h"
@@ -19,6 +23,108 @@ using namespace server;
 
 using std::vector;
 using boost::asio::ip::tcp;
+
+class Image
+{
+public:
+
+private:
+    Image(unsigned row, unsigned column)
+    {
+      row_=row;
+      column_=column;
+      data_ = new double* [row_];
+      for(int i=0; i<row_; i++){ data_[i] = new double [column_]; }
+      for(int i=0; i<row_; i++){ for(int j=0; j<column_; j++){ data_[i][j]=0; } }
+    }
+
+    Image(std::string const& filename)
+    {
+      std::ifstream inputFileStream(filename, std::ios::in);
+      std::stringstream fileContent;
+      std::string fileType;
+      double maxIntensity_;
+
+      std::getline(inputFileStream, fileType);
+      //could also check file extension with boost filesystem instead.
+      if(fileType == "P2"){ std::cerr << "Wrong file type, please select a pgm file instead."; }
+
+      fileContent << inputFileStream.rdbuf();
+      fileContent >> column_ >> row_;
+      fileContent >> maxIntensity_;
+
+      data_ = new double* [row_];
+      for(int i=0; i<row_; i++){ data_[i] = new double [column_]; }
+      for(int i=0; i<row_; i++){ for(int j=0; j<column_; j++){ fileContent >> data_[i][j]; } }
+
+      inputFileStream.close();
+      std::cout << "File succssfully read out." << std::endl;
+    }
+
+    ~Image(){ for(int i=0; i<row_; i++){ delete [] data_[i]; } delete [] data_;}
+
+    Image dct()
+    {
+      Image coefImage(row_, column_);
+      int i, j, m, n;
+      double c_i, c_j, sum;
+
+      for(i=0; i<row_; i++){
+        for(j=0; j<column_; j++){
+
+            sum = 0.0;
+
+            if(i==0){ c_i = std::sqrt(1/row_); }
+            else{ c_i = std::sqrt(2/row_); }
+
+            if(j==0){ c_j =std::sqrt(1/column_); }
+            else{ c_j = std::sqrt(2/column_); }
+
+            for(m=0; m<row_; m++){
+              for(n=0; n<column_; n++){
+                  sum += data_[i][j] * std::cos( (2 * m + 1) * i * pi / (2 * row_) ) * std::cos( (2 * n + 1) * j * pi / (2 * column_) );
+            } }
+
+            coefImage.data_[i][j] = c_i * c_j * sum ;
+      } }
+
+      return coefImage;
+    }
+
+    Image idct()
+    {
+      Image pixelImage(row_, column_);
+      int i, j, m, n;
+      double c_i, c_j, sum;
+
+      for(i=0; i<row_; i++){
+        for(j=0; j<column_; j++){
+
+            sum = 0.0;
+
+            if(i==0){ c_i = std::sqrt(1/row_); }
+            else{ c_i = std::sqrt(2/row_); }
+
+            if(j==0){ c_j =std::sqrt(1/column_); }
+            else{ c_j = std::sqrt(2/column_); }
+
+            for(m=0; m<row_; m++){
+              for(n=0; n<column_; n++){
+                  sum += data_[i][j] * std::cos( (2 * m + 1) * i * pi / (2 * row_) ) * std::cos( (2 * n + 1) * j * pi / (2 * column_) );
+            } }
+
+            pixelImage.data_[i][j] = c_i * c_j * sum ;
+        }
+      }
+
+      return pixelImage;
+    }
+
+    double** data_;
+    unsigned row_;
+    unsigned column_;
+};
+
 
 void runClient() {
   try {
