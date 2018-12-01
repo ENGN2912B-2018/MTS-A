@@ -1,6 +1,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <array>
 #include <thread>
 #include <chrono>
 #include <cassert>
@@ -71,6 +72,23 @@ double* quickSort(double* array)
     return array;
 }
 
+double* flattenArray(double** array)
+{
+    int i, j;
+    int row = sizeof(array)/sizeof(array[0]);
+    int column = sizeof(array[0])/sizeof(array[0][0]);
+
+    int k = 0;
+    double* flattenedArray = new double[row*column];
+
+    for(i=0; i<row; i++){
+        for(j=0; j<column; j++){
+            flattenedArray[k] = array[i][j];
+            k += 1;
+    }   }
+
+    return flattenedArray;
+}
 
 class Image
 {
