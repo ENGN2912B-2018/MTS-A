@@ -23,6 +23,54 @@ using namespace server;
 using std::vector;
 using boost::asio::ip::tcp;
 
+int partition(double* array, int left, int right)
+{
+    int pivotIndex = left;
+    double pivot = array[left];
+    double temp;
+
+    while(left <= right)
+    {
+        while(array[left] < pivot){ left += 1; continue; }
+        while(array[right] >= pivot){ right -= 1; continue; }
+
+        if(left == pivotIndex){ pivotIndex = right; }
+        if(right == pivotIndex){ pivotIndex = left; }
+
+        temp = array[left];
+        array[left] = array[right];
+        array[right] = temp;
+
+        temp = array[left];
+        array[left] = array[pivotIndex];
+        array[pivotIndex] = temp;
+    }
+
+    return left;
+}
+
+void quickSort(double* array, int left, int right)
+{
+    if(left < right)
+    {
+        double boundary = partition(array, left, right);
+
+        quickSort(array, left, boundary-1);
+        quickSort(array, boundary+1, right);
+    }
+
+}
+
+double* quickSort(double* array)
+{
+    int left = 0;
+    int right = sizeof(array)/sizeof(array[0]);
+
+    quickSort(array, left, right);
+
+    return array;
+}
+
 
 class Image
 {
@@ -82,10 +130,6 @@ public:
     double** data_;
 
 private:
-    // double** getData()
-    // {
-    //     return this->data_;
-    // }
 
     Image dct()
     {
