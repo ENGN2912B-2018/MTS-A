@@ -11,7 +11,6 @@
 #include <boost/bind.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/array.hpp>
-#define pi 3.1415926535
 
 #include "image.h"
 #include "client/client.h"
@@ -67,11 +66,6 @@ public:
 
     ~Image(){ for(int i=0; i<row_; i++){ delete [] data_[i]; } delete [] data_;}
 
-    double** data_;
-    unsigned row_;
-    unsigned column_;
-
-private:
     Image dct()
     {
       Image coefImage(row_, column_);
@@ -83,18 +77,19 @@ private:
 
             sum = 0.0;
 
-            if(i==0){ c_i = std::sqrt(1/row_); }
-            else{ c_i = std::sqrt(2/row_); }
+            if(i==0){ c_i = std::sqrt(1.0/2); }
+            else{ c_i = std::sqrt(1.0/2); }
 
-            if(j==0){ c_j =std::sqrt(1/column_); }
-            else{ c_j = std::sqrt(2/column_); }
+            if(j==0){ c_j = std::sqrt(1.0/2); }
+            else{ c_j = std::sqrt(1.0/2); }
 
             for(m=0; m<row_; m++){
               for(n=0; n<column_; n++){
-                  sum += data_[i][j] * std::cos( (2 * m + 1) * i * pi / (2 * row_) ) * std::cos( (2 * n + 1) * j * pi / (2 * column_) );
+                  sum += data_[m][n] * std::cos( (2 * m + 1) * i * pi / (2 * row_) ) * std::cos( (2 * n + 1) * j * pi / (2 * column_) );
             } }
 
-            coefImage.data_[i][j] = c_i * c_j * sum ;
+            coefImage.data_[i][j] = c_i * c_j * sum / std::sqrt(2 * row_);
+            std::cout << "Pixel Intensity: " << data_[i][j] << " Pixel Coefficient: " << coefImage.data_[i][j] << std::endl;
       } }
 
       return coefImage;
@@ -104,30 +99,37 @@ private:
     {
       Image pixelImage(row_, column_);
       int i, j, m, n;
-      double c_i, c_j, sum;
+      double c_m, c_n, sum;
 
       for(i=0; i<row_; i++){
         for(j=0; j<column_; j++){
 
             sum = 0.0;
 
-            if(i==0){ c_i = std::sqrt(1/row_); }
-            else{ c_i = std::sqrt(2/row_); }
-
-            if(j==0){ c_j =std::sqrt(1/column_); }
-            else{ c_j = std::sqrt(2/column_); }
-
             for(m=0; m<row_; m++){
               for(n=0; n<column_; n++){
-                  sum += data_[i][j] * std::cos( (2 * m + 1) * i * pi / (2 * row_) ) * std::cos( (2 * n + 1) * j * pi / (2 * column_) );
+
+                  if(m==0){ c_m = std::sqrt(1.0/2); }
+                  else{ c_m = std::sqrt(1.0/2); }
+
+                  if(n==0){ c_n = std::sqrt(1.0/2); }
+                  else{ c_n = std::sqrt(1.0/2); }
+
+                  sum += data_[m][n] * std::cos( (2 * i + 1) * m * pi / (2 * row_) ) * std::cos( (2 * j + 1) * n * pi / (2 * column_) );
             } }
 
-            pixelImage.data_[i][j] = c_i * c_j * sum ;
+            pixelImage.data_[i][j] = c_m * c_n * sum / std::sqrt(2 * row_);
+            std::cout << "Pixel Coefficient: " << data_[i][j] << " Pixel Intensity: " << pixelImage.data_[i][j] << std::endl;
         }
       }
 
       return pixelImage;
     }
+
+    double** data_;
+    double pi = 3.14159265358979324;
+    unsigned row_;
+    unsigned column_;
 
 };
 
@@ -212,6 +214,8 @@ int main() {
   // thread1.join();
   // thread2.join();
   Image testImage("../noisyImage.pgm");
+  Image coefImage = testImage.dct();
+  Image pixelImage = coefImage.idct();
 
   return 0;
 }
