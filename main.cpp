@@ -23,6 +23,7 @@ using namespace server;
 using std::vector;
 using boost::asio::ip::tcp;
 
+
 class Image
 {
 
@@ -65,6 +66,26 @@ public:
     }
 
     ~Image(){ for(int i=0; i<row_; i++){ delete [] data_[i]; } delete [] data_;}
+
+    Image compress(unsigned int compressionRatio)
+    {
+        Image coefImage = dct();
+        return coefImage;
+    }
+
+    Image decompress()
+    {
+        Image pixelImage = idct();
+        return pixelImage;
+    }
+
+    double** data_;
+
+private:
+    // double** getData()
+    // {
+    //     return this->data_;
+    // }
 
     Image dct()
     {
@@ -126,7 +147,6 @@ public:
       return pixelImage;
     }
 
-    double** data_;
     double pi = 3.14159265358979324;
     unsigned row_;
     unsigned column_;
@@ -213,9 +233,14 @@ int main() {
   //
   // thread1.join();
   // thread2.join();
+
   Image testImage("../noisyImage.pgm");
-  Image coefImage = testImage.dct();
-  Image pixelImage = coefImage.idct();
+
+  Image coefImage = testImage.compress(10);
+  std::cout << coefImage.data_[0][0]<< std::endl;
+
+  Image pixelImage = coefImage.decompress();
+  std::cout << pixelImage.data_[0][0]<< std::endl;
 
   return 0;
 }
