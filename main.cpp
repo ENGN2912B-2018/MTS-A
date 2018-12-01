@@ -72,18 +72,16 @@ double* quickSort(double* array)
     return array;
 }
 
-double* flattenArray(double** array)
+double* flattenArray(double** array, int blockSize)
 {
     int i, j;
-    int row = sizeof(array)/sizeof(array[0]);
-    int column = sizeof(array[0])/sizeof(array[0][0]);
-
     int k = 0;
-    double* flattenedArray = new double[row*column];
+    double* flattenedArray = new double[blockSize*blockSize];
 
-    for(i=0; i<row; i++){
-        for(j=0; j<column; j++){
+    for(i=0; i<blockSize; i++){
+        for(j=0; j<blockSize; j++){
             flattenedArray[k] = array[i][j];
+            std::cout << flattenedArray[k] << " ";
             k += 1;
     }   }
 
@@ -160,18 +158,18 @@ private:
 
             sum = 0.0;
 
-            if(i==0){ c_i = std::sqrt(1.0/2); }
-            else{ c_i = std::sqrt(1.0/2); }
+            if(i==0){ c_i = std::sqrt(1.0/row_); }
+            else{ c_i = std::sqrt(2.0/row_); }
 
-            if(j==0){ c_j = std::sqrt(1.0/2); }
-            else{ c_j = std::sqrt(1.0/2); }
+            if(j==0){ c_j = std::sqrt(1.0/column_); }
+            else{ c_j = std::sqrt(2.0/column_); }
 
             for(m=0; m<row_; m++){
               for(n=0; n<column_; n++){
-                  sum += data_[m][n] * std::cos( (2 * m + 1) * i * pi / (2 * row_) ) * std::cos( (2 * n + 1) * j * pi / (2 * column_) );
+                  sum += data_[m][n] * std::cos( (2.0 * m + 1) * i * pi / (2.0 * row_) ) * std::cos( (2.0 * n + 1) * j * pi / (2.0 * column_) );
             } }
 
-            coefImage.data_[i][j] = c_i * c_j * sum / std::sqrt(2 * row_);
+            coefImage.data_[i][j] = c_i * c_j * sum;
             std::cout << "Pixel Intensity: " << data_[i][j] << " Pixel Coefficient: " << coefImage.data_[i][j] << std::endl;
       } }
 
@@ -192,16 +190,16 @@ private:
             for(m=0; m<row_; m++){
               for(n=0; n<column_; n++){
 
-                  if(m==0){ c_m = std::sqrt(1.0/2); }
-                  else{ c_m = std::sqrt(1.0/2); }
+                  if(m==0){ c_m = std::sqrt(1.0/row_); }
+                  else{ c_m = std::sqrt(2.0/row_); }
 
-                  if(n==0){ c_n = std::sqrt(1.0/2); }
-                  else{ c_n = std::sqrt(1.0/2); }
+                  if(n==0){ c_n = std::sqrt(1.0/column_); }
+                  else{ c_n = std::sqrt(2.0/column_); }
 
-                  sum += data_[m][n] * std::cos( (2 * i + 1) * m * pi / (2 * row_) ) * std::cos( (2 * j + 1) * n * pi / (2 * column_) );
+                  sum += c_m * c_n * data_[m][n] * std::cos( (2.0 * i + 1) * m * pi / (2.0 * row_) ) * std::cos( (2.0 * j + 1) * n * pi / (2.0 * column_) );
             } }
 
-            pixelImage.data_[i][j] = c_m * c_n * sum / std::sqrt(2 * row_);
+            pixelImage.data_[i][j] =  sum;
             std::cout << "Pixel Coefficient: " << data_[i][j] << " Pixel Intensity: " << pixelImage.data_[i][j] << std::endl;
         }
       }
@@ -303,6 +301,11 @@ int main() {
 
   Image pixelImage = coefImage.decompress();
   std::cout << pixelImage.data_[0][0]<< std::endl;
+
+  double* flattenedArray = flattenArray(coefImage.data_, 8);
+  double* sortedArray = quickSort(flattenedArray);
+
+  delete[] flattenedArray;
 
   return 0;
 }
