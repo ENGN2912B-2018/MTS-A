@@ -26,9 +26,8 @@ using boost::asio::ip::tcp;
 
 class Image
 {
-public:
 
-private:
+public:
     Image(unsigned row, unsigned column)
     {
       row_=row;
@@ -45,24 +44,34 @@ private:
       std::string fileType;
       double maxIntensity_;
 
-      std::getline(inputFileStream, fileType);
-      //could also check file extension with boost filesystem instead.
-      if(fileType == "P2"){ std::cerr << "Wrong file type, please select a pgm file instead."; }
-
       fileContent << inputFileStream.rdbuf();
+      fileContent >> fileType;
+
+      //could also check file extension with boost filesystem instead.
+      if(fileType != "P2"){ std::cerr << "Wrong file type, please select a pgm file instead." << std::endl; exit(0); }
       fileContent >> column_ >> row_;
       fileContent >> maxIntensity_;
 
+      std::cout << "File type: " << fileType << std::endl;
+      std::cout << "Column: " << column_ << "  Row: "<< row_ << std::endl;
+      std::cout << "Max Intensity: "<< maxIntensity_ << std::endl;
+      std::cout << "\nReading File...." << std::endl;
+
       data_ = new double* [row_];
       for(int i=0; i<row_; i++){ data_[i] = new double [column_]; }
-      for(int i=0; i<row_; i++){ for(int j=0; j<column_; j++){ fileContent >> data_[i][j]; } }
+      for(int i=0; i<row_; i++){ for(int j=0; j<column_; j++){ fileContent >> data_[i][j]; std::cout << data_[i][j] << " "; } }
 
       inputFileStream.close();
-      std::cout << "File succssfully read out." << std::endl;
+      std::cout << "\nDone." << std::endl;
     }
 
     ~Image(){ for(int i=0; i<row_; i++){ delete [] data_[i]; } delete [] data_;}
 
+    double** data_;
+    unsigned row_;
+    unsigned column_;
+
+private:
     Image dct()
     {
       Image coefImage(row_, column_);
@@ -120,9 +129,6 @@ private:
       return pixelImage;
     }
 
-    double** data_;
-    unsigned row_;
-    unsigned column_;
 };
 
 
@@ -200,10 +206,12 @@ void testImage() {
 
 
 int main() {
-  std::thread thread1(runServer);
-  std::thread thread2(runClient);
+  // std::thread thread1(runServer);
+  // std::thread thread2(runClient);
+  //
+  // thread1.join();
+  // thread2.join();
+  Image testImage("../noisyImage.pgm");
 
-  thread1.join();
-  thread2.join();
   return 0;
 }
