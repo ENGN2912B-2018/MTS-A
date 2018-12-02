@@ -174,17 +174,24 @@ public:
     double* compress(unsigned int compressionRatio, unsigned int blockSize=8)
     {
         Image coefImage = dct();
-        int compressionLength = (int)( (compressionRatio/100.0) * blockSize * blockSize );
+        // int compressionLength = (int)( (compressionRatio/100.0) * blockSize * blockSize );
 
         double* flattenedArray = flattenArray(coefImage.data_, blockSize);
-        std::vector<int> compressionIndeces = getCompressionIndeces(flattenedArray, blockSize, compressionLength);
+        if(compressionRatio != 0)
+        {
+            for(int i=0; i<quantMatrix.size(); i++)
+            {
+                flattenedArray[i] = (int)( flattenedArray[i]/quantMatrix[i] );
+            }
+        }
+        // std::vector<int> compressionIndeces = getCompressionIndeces(flattenedArray, blockSize, compressionLength);
 
         double* compressedCoef = new double[blockSize * blockSize];
         for(int i=0; i< blockSize * blockSize; i++){ compressedCoef[i] = flattenedArray[i]; }
-        for(int i=0; i<compressionIndeces.size(); i++)
-        {
-            compressedCoef[compressionIndeces[i]] = 0;
-        }
+        // for(int i=0; i<compressionIndeces.size(); i++)
+        // {
+        //     compressedCoef[compressionIndeces[i]] = 0;
+        // }
 
         delete[] flattenedArray;
         return compressedCoef;
@@ -220,6 +227,10 @@ public:
     }
 
     double** data_;
+    std::vector<int> quantMatrix = {16, 11, 10, 16, 24, 40, 51, 61, 12, 12, 14, 19, 26,
+    58, 60, 55, 14, 13, 16, 24, 40, 57, 69, 56, 14, 17, 22, 29, 51, 87, 80, 62, 18, 22,
+    37, 56, 68, 109, 103, 77, 24, 35, 55, 64, 81, 104, 113, 92, 49, 64, 78, 87, 103, 121,
+    120, 101, 72, 92, 95, 98, 112, 100, 103, 99};
 
 private:
 
@@ -401,7 +412,7 @@ int main() {
   std::cout << "\nUncompressed coefficients:" << std::endl;
   for(int i=0; i<20; i++){ std::cout << uncompressedCoef[i] << " ";}
 
-  double* compressedCoef = testImage.compress(30, 8);
+  double* compressedCoef = testImage.compress(10, 8);
   std::cout << "\n\nCompressed coefficients:" << std::endl;
   for(int i=0; i<20; i++){ std::cout << compressedCoef[i] << " ";}
 
@@ -415,4 +426,6 @@ int main() {
   std::cout << "\n\nCompressed Intensities... " << std::endl;
   for(int i=0; i<compressedIntensities.size(); i++){ std::cout << compressedIntensities[i] << " ";}
 
+  delete[] uncompressedCoef;
+  delete[] compressedCoef;
 }
