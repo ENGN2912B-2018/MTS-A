@@ -95,7 +95,7 @@ std::vector<int> getCompressionIndeces(double* array, unsigned int blockSize, in
     return compressionIndeces;
 }
 
-double* flattenArray(double** array, int blockSize)
+double* flattenArray(double** array, unsigned int blockSize)
 {
     int i, j;
     int k = 0;
@@ -109,6 +109,24 @@ double* flattenArray(double** array, int blockSize)
 
     return flattenedArray;
 }
+
+double** expandArray(double* array, unsigned int blockSize)
+{
+    int i, j;
+    int k = 0;
+    double** expandedArray = new double* [blockSize];
+    for(i=0; i<blockSize; i++){ expandedArray[i] = new double[blockSize]; }
+
+    for(i=0; i<blockSize; i++){
+        for(j=0; j<blockSize; j++){
+            expandedArray[i][j] = array[k];
+            k += 1;
+        }
+    }
+
+    return expandedArray;
+}
+
 
 class Image
 {
@@ -151,7 +169,7 @@ public:
 
     }
 
-    ~Image(){ for(int i=0; i<row_; i++){ delete[] data_[i]; } delete[] data_;}
+    ~Image(){ for(int i=0; i<row_; i++){ delete[] data_[i]; } delete[] data_; }
 
     double* compress(unsigned int compressionRatio, unsigned int blockSize=8)
     {
@@ -163,7 +181,6 @@ public:
 
         double* compressedCoef = new double[blockSize * blockSize];
         for(int i=0; i< blockSize * blockSize; i++){ compressedCoef[i] = flattenedArray[i]; }
-
         for(int i=0; i<compressionIndeces.size(); i++)
         {
             compressedCoef[compressionIndeces[i]] = 0;
@@ -171,6 +188,29 @@ public:
 
         delete[] flattenedArray;
         return compressedCoef;
+    }
+
+    Image compress()
+    {
+        Image coefImage = dct();
+        return coefImage;
+    }
+
+    std::vector<double> decompress(double* array, unsigned int blockSize)
+    {
+        int i, j;
+        std::vector<double> uncompressedIntensities;
+
+        double** expandedArray = expandArray(array, blockSize);
+        Image pixelImage = idct(expandedArray);
+
+        for(i=0; i<blockSize; i++){
+            for(j=0; j<blockSize; j++){
+                uncompressedIntensities.push_back( pixelImage.data_[i][j] );
+            }
+        }
+
+        return uncompressedIntensities;
     }
 
     Image decompress()
@@ -232,6 +272,36 @@ private:
                   else{ c_n = std::sqrt(2.0/column_); }
 
                   sum += c_m * c_n * data_[m][n] * std::cos( (2.0 * i + 1) * m * pi / (2.0 * row_) ) * std::cos( (2.0 * j + 1) * n * pi / (2.0 * column_) );
+            } }
+
+            pixelImage.data_[i][j] =  sum;
+        }
+      }
+
+      return pixelImage;
+    }
+
+    Image idct(double** data)
+    {
+      Image pixelImage(row_, column_);
+      int i, j, m, n;
+      double c_m, c_n, sum;
+
+      for(i=0; i<row_; i++){
+        for(j=0; j<column_; j++){
+
+            sum = 0.0;
+
+            for(m=0; m<row_; m++){
+              for(n=0; n<column_; n++){
+
+                  if(m==0){ c_m = std::sqrt(1.0/row_); }
+                  else{ c_m = std::sqrt(2.0/row_); }
+
+                  if(n==0){ c_n = std::sqrt(1.0/column_); }
+                  else{ c_n = std::sqrt(2.0/column_); }
+
+                  sum += c_m * c_n * data[m][n] * std::cos( (2.0 * i + 1) * m * pi / (2.0 * row_) ) * std::cos( (2.0 * j + 1) * n * pi / (2.0 * column_) );
             } }
 
             pixelImage.data_[i][j] =  sum;
@@ -328,11 +398,21 @@ int main() {
   Image testImage("../noisyImage.pgm");
 
   double* uncompressedCoef = testImage.compress(0, 8);
-  for(int i=0; i<10; i++){ std::cout << uncompressedCoef[i] << " ";}
+  std::cout << "\nUncompressed coefficients:" << std::endl;
+  for(int i=0; i<20; i++){ std::cout << uncompressedCoef[i] << " ";}
 
-  double* compressedCoef = testImage.compress(20, 8);
-  for(int i=0; i<10; i++){ std::cout << compressedCoef[i] << " ";}
+  double* compressedCoef = testImage.compress(30, 8);
+  std::cout << "\n\nCompressed coefficients:" << std::endl;
+  for(int i=0; i<20; i++){ std::cout << compressedCoef[i] << " ";}
 
-  delete[] compressedCoef;
-  delete[] uncompressedCoef;
+  Image coefImage = testImage.compress();
+
+  std::vector<double> uncompressedIntensities = coefImage.decompress(uncompressedCoef, 8);
+  std::vector<double> compressedIntensities = coefImage.decompress(compressedCoef, 8);
+
+  std::cout << "\n\nUncompressed Intensities... " << std::endl;
+  for(int i=0; i<uncompressedIntensities.size(); i++){ std::cout << uncompressedIntensities[i] << " ";}
+  std::cout << "\n\nCompressed Intensities... " << std::endl;
+  for(int i=0; i<compressedIntensities.size(); i++){ std::cout << compressedIntensities[i] << " ";}
+
 }
