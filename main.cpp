@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+#include <algorithm>
 #include <vector>
 #include <array>
 #include <thread>
@@ -26,14 +27,14 @@ using boost::asio::ip::tcp;
 
 int partition(double* array, int left, int right)
 {
-    int pivotIndex = left;
-    double pivot = array[left];
+    int pivotIndex = right;
+    double pivot = array[right];
     double temp;
 
     while(left <= right)
     {
-        while(array[left] < pivot){ left += 1; continue; }
-        while(array[right] >= pivot){ right -= 1; continue; }
+        if(array[left] < pivot){ left += 1; continue; }
+        if(array[right] >= pivot){ right -= 1; continue; }
 
         if(left == pivotIndex){ pivotIndex = right; }
         if(right == pivotIndex){ pivotIndex = left; }
@@ -41,11 +42,11 @@ int partition(double* array, int left, int right)
         temp = array[left];
         array[left] = array[right];
         array[right] = temp;
-
-        temp = array[left];
-        array[left] = array[pivotIndex];
-        array[pivotIndex] = temp;
     }
+
+    temp = array[left];
+    array[left] = array[pivotIndex];
+    array[pivotIndex] = temp;
 
     return left;
 }
@@ -62,14 +63,36 @@ void quickSort(double* array, int left, int right)
 
 }
 
-double* quickSort(double* array)
+double* quickSort(double* array, int blockSize)
 {
     int left = 0;
-    int right = sizeof(array)/sizeof(array[0]);
+    int right = blockSize*blockSize - 1;
 
     quickSort(array, left, right);
 
     return array;
+}
+
+std::vector<int> getCompressionIndeces(double* array, unsigned int blockSize, int compressionLength)
+{
+    std::vector<int> compressionIndeces;
+    double min;
+    int i, j, minIndex;
+
+    for(i=0; i<compressionLength; i++){
+        min = array[0];
+        minIndex = 0;
+        for(j=0; j < blockSize * blockSize; j++){
+            if(array[j] < min && std::find(compressionIndeces.begin(), compressionIndeces.end(), j) == compressionIndeces.end() )
+            {
+                minIndex = j;
+                min = array[minIndex];
+            }
+        }
+        compressionIndeces.push_back(minIndex);
+
+    }
+    return compressionIndeces;
 }
 
 double* flattenArray(double** array, int blockSize)
@@ -81,7 +104,6 @@ double* flattenArray(double** array, int blockSize)
     for(i=0; i<blockSize; i++){
         for(j=0; j<blockSize; j++){
             flattenedArray[k] = array[i][j];
-            std::cout << flattenedArray[k] << " ";
             k += 1;
     }   }
 
@@ -116,25 +138,39 @@ public:
       fileContent >> column_ >> row_;
       fileContent >> maxIntensity_;
 
-      std::cout << "File type: " << fileType << std::endl;
-      std::cout << "Column: " << column_ << "  Row: "<< row_ << std::endl;
-      std::cout << "Max Intensity: "<< maxIntensity_ << std::endl;
-      std::cout << "\nReading File...." << std::endl;
+      // std::cout << "File type: " << fileType << std::endl;
+      // std::cout << "Column: " << column_ << "  Row: "<< row_ << std::endl;
+      // std::cout << "Max Intensity: "<< maxIntensity_ << std::endl;
+      // std::cout << "\nReading File...." << std::endl;
 
       data_ = new double* [row_];
       for(int i=0; i<row_; i++){ data_[i] = new double [column_]; }
-      for(int i=0; i<row_; i++){ for(int j=0; j<column_; j++){ fileContent >> data_[i][j]; std::cout << data_[i][j] << " "; } }
+      for(int i=0; i<row_; i++){ for(int j=0; j<column_; j++){ fileContent >> data_[i][j]; } }
 
       inputFileStream.close();
-      std::cout << "\nDone." << std::endl;
+
     }
 
-    ~Image(){ for(int i=0; i<row_; i++){ delete [] data_[i]; } delete [] data_;}
+    ~Image(){ for(int i=0; i<row_; i++){ delete[] data_[i]; } delete[] data_;}
 
-    Image compress(unsigned int compressionRatio)
+    double* compress(unsigned int compressionRatio, unsigned int blockSize=8)
     {
         Image coefImage = dct();
-        return coefImage;
+        int compressionLength = (int)( (compressionRatio/100.0) * blockSize * blockSize );
+
+        double* flattenedArray = flattenArray(coefImage.data_, blockSize);
+        std::vector<int> compressionIndeces = getCompressionIndeces(flattenedArray, blockSize, compressionLength);
+
+        double* compressedCoef = new double[blockSize * blockSize];
+        for(int i=0; i< blockSize * blockSize; i++){ compressedCoef[i] = flattenedArray[i]; }
+
+        for(int i=0; i<compressionIndeces.size(); i++)
+        {
+            compressedCoef[compressionIndeces[i]] = 0;
+        }
+
+        delete[] flattenedArray;
+        return compressedCoef;
     }
 
     Image decompress()
@@ -170,7 +206,6 @@ private:
             } }
 
             coefImage.data_[i][j] = c_i * c_j * sum;
-            std::cout << "Pixel Intensity: " << data_[i][j] << " Pixel Coefficient: " << coefImage.data_[i][j] << std::endl;
       } }
 
       return coefImage;
@@ -200,7 +235,6 @@ private:
             } }
 
             pixelImage.data_[i][j] =  sum;
-            std::cout << "Pixel Coefficient: " << data_[i][j] << " Pixel Intensity: " << pixelImage.data_[i][j] << std::endl;
         }
       }
 
@@ -212,7 +246,6 @@ private:
     unsigned column_;
 
 };
-
 
 void runClient() {
   try {
@@ -259,7 +292,6 @@ void runServer() {
 
 }
 
-
 /// test serialization/deserialization works
 void testImage() {
   vector<vector<unsigned>> img = readImage("../images/feep.pgm");
@@ -286,7 +318,6 @@ void testImage() {
 }
 
 
-
 int main() {
   // std::thread thread1(runServer);
   // std::thread thread2(runClient);
@@ -296,16 +327,12 @@ int main() {
 
   Image testImage("../noisyImage.pgm");
 
-  Image coefImage = testImage.compress(10);
-  std::cout << coefImage.data_[0][0]<< std::endl;
+  double* uncompressedCoef = testImage.compress(0, 8);
+  for(int i=0; i<10; i++){ std::cout << uncompressedCoef[i] << " ";}
 
-  Image pixelImage = coefImage.decompress();
-  std::cout << pixelImage.data_[0][0]<< std::endl;
+  double* compressedCoef = testImage.compress(20, 8);
+  for(int i=0; i<10; i++){ std::cout << compressedCoef[i] << " ";}
 
-  double* flattenedArray = flattenArray(coefImage.data_, 8);
-  double* sortedArray = quickSort(flattenedArray);
-
-  delete[] flattenedArray;
-
-  return 0;
+  delete[] compressedCoef;
+  delete[] uncompressedCoef;
 }
