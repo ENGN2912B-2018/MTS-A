@@ -8,7 +8,7 @@
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/array.hpp>
 
-#include "server/image.h"
+#include "image/image.h"
 #include "client/client.h"
 #include "server/server.h"
 
