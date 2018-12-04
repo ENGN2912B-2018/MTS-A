@@ -80,10 +80,10 @@ std::vector<int> getCompressionIndeces(double* array, unsigned int blockSize, in
     int i, j, minIndex;
 
     for(i=0; i<compressionLength; i++){
-        min = array[0];
+        min = abs(array[0]);
         minIndex = 0;
         for(j=0; j < blockSize * blockSize; j++){
-            if(array[j] < min && std::find(compressionIndeces.begin(), compressionIndeces.end(), j) == compressionIndeces.end() )
+            if(abs(array[j]) < min && std::find(compressionIndeces.begin(), compressionIndeces.end(), j) == compressionIndeces.end() )
             {
                 minIndex = j;
                 min = array[minIndex];
@@ -184,10 +184,12 @@ public:
                 flattenedArray[i] = (int)( flattenedArray[i]/quantMatrix[i] );
             }
         }
+
         // std::vector<int> compressionIndeces = getCompressionIndeces(flattenedArray, blockSize, compressionLength);
 
         double* compressedCoef = new double[blockSize * blockSize];
-        for(int i=0; i< blockSize * blockSize; i++){ compressedCoef[i] = flattenedArray[i]; }
+        if(compressionRatio != 0){ for(int i=0; i< blockSize * blockSize; i++){ compressedCoef[i] = flattenedArray[i] * quantMatrix[i]; } }
+        else{ for(int i=0; i< blockSize * blockSize; i++){ compressedCoef[i] = flattenedArray[i]; } }
         // for(int i=0; i<compressionIndeces.size(); i++)
         // {
         //     compressedCoef[compressionIndeces[i]] = 0;
@@ -213,7 +215,7 @@ public:
 
         for(i=0; i<blockSize; i++){
             for(j=0; j<blockSize; j++){
-                uncompressedIntensities.push_back( pixelImage.data_[i][j] );
+                uncompressedIntensities.push_back( (int)(pixelImage.data_[i][j]) );
             }
         }
 
@@ -425,6 +427,7 @@ int main() {
   for(int i=0; i<uncompressedIntensities.size(); i++){ std::cout << uncompressedIntensities[i] << " ";}
   std::cout << "\n\nCompressed Intensities... " << std::endl;
   for(int i=0; i<compressedIntensities.size(); i++){ std::cout << compressedIntensities[i] << " ";}
+  std::cout << "\n\n" << std::endl;
 
   delete[] uncompressedCoef;
   delete[] compressedCoef;
