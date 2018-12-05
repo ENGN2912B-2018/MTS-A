@@ -8,7 +8,7 @@
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/array.hpp>
 
-#include "image/image.h"
+#include "image/image2.h"
 #include "client/client.h"
 #include "server/server.h"
 
@@ -64,32 +64,6 @@ void runServer() {
 
 }
 
-/// test serialization/deserialization works
-// void testImage() {
-//   vector<vector<unsigned>> img = readImage("../images/feep.pgm");
-//   vector<vector<double>> coeff = toCoefficients(img);
-//
-//   assert(img.size() == 7);
-//   assert(img[0].size() == 24);
-//   assert(coeff.size() == 7);
-//   assert(coeff[0].size() == 24);
-//
-//   vector<char> ser = serialize(coeff);
-//   vector<vector<double>> copy = deserialize(ser);
-//
-//   std::cout << ser.size() << std::endl;
-//   assert(copy.size() == 7);
-//   assert(copy[0].size() == 24);
-//
-//   for (int i = 0; i < 7; i++) {
-//     for (int j = 0; j < 24; j++) {
-//       assert(coeff[i][j] == copy[i][j]);
-//     }
-//     std::cout << std::endl;
-//   }
-// }
-
-
 int main() {
   // std::thread thread1(runServer);
   // std::thread thread2(runClient);
@@ -97,27 +71,59 @@ int main() {
   // thread1.join();
   // thread2.join();
 
-  Image testImage("../noisyImage.pgm");
+  Image testImage("../mirrordog.pgm");
 
-  double* uncompressedCoef = testImage.compress(0, 8);
-  std::cout << "\nUncompressed coefficients:" << std::endl;
-  for(int i=0; i<20; i++){ std::cout << uncompressedCoef[i] << " ";}
+  // testImage.compress(0);
+  // testImage.decompress();
 
-  double* compressedCoef = testImage.compress(10, 8);
-  std::cout << "\n\nCompressed coefficients:" << std::endl;
-  for(int i=0; i<20; i++){ std::cout << compressedCoef[i] << " ";}
+  testImage.saveImage("../mirrordog1.pgm");
 
-  Image coefImage = testImage.compress();
-
-  std::vector<double> uncompressedIntensities = coefImage.decompress(uncompressedCoef, 8);
-  std::vector<double> compressedIntensities = coefImage.decompress(compressedCoef, 8);
-
-  std::cout << "\n\nUncompressed Intensities... " << std::endl;
-  for(int i=0; i<uncompressedIntensities.size(); i++){ std::cout << uncompressedIntensities[i] << " ";}
-  std::cout << "\n\nCompressed Intensities... " << std::endl;
-  for(int i=0; i<compressedIntensities.size(); i++){ std::cout << compressedIntensities[i] << " ";}
-  std::cout << "\n\n" << std::endl;
-
-  delete[] uncompressedCoef;
-  delete[] compressedCoef;
+  // std::vector< std::vector<double> > vec1 = testImage.intMatrix_;
+  // std::vector< std::vector<double> > vec2 = testImage.coefMatrix_;
+  //
+  // for(int i=0; i<16; i++)
+  // {
+  //   for(int j=0; j<16; j++)
+  //   {
+  //     std::cout << vec1[i][j] << "  ";
+  //   }
+  //   std::cout << std::endl;
+  // }
+  // std::cout << "\n\n";
+  // for(int i=0; i<16; i++)
+  // {
+  //   for(int j=0; j<16; j++)
+  //   {
+  //     std::cout << vec2[i][j] << "  ";
+  //   }
+  //   std::cout << std::endl;
+  // }
+  // std::cout << "\n";
+  // std::vector<int> vec1 = {4,1,2,0,3,5,8};
+  // std::vector<int> vec2 = heapify(vec1);
+  // for(int i=0; i<vec2.size(); i++){ std::cout << vec2[i] << "  "; }
+  //
+  // Image testImage("../noisyImage.pgm");
+  //
+  // double* uncompressedCoef = testImage.compress(0, 8);
+  // std::cout << "\nUncompressed coefficients:" << std::endl;
+  // for(int i=0; i<20; i++){ std::cout << uncompressedCoef[i] << " ";}
+  //
+  // double* compressedCoef = testImage.compress(10, 8);
+  // std::cout << "\n\nCompressed coefficients:" << std::endl;
+  // for(int i=0; i<20; i++){ std::cout << compressedCoef[i] << " ";}
+  //
+  // Image coefImage = testImage.compress();
+  //
+  // std::vector<double> uncompressedIntensities = coefImage.decompress(uncompressedCoef, 8);
+  // std::vector<double> compressedIntensities = coefImage.decompress(compressedCoef, 8);
+  //
+  // std::cout << "\n\nUncompressed Intensities... " << std::endl;
+  // for(int i=0; i<uncompressedIntensities.size(); i++){ std::cout << uncompressedIntensities[i] << " ";}
+  // std::cout << "\n\nCompressed Intensities... " << std::endl;
+  // for(int i=0; i<compressedIntensities.size(); i++){ std::cout << compressedIntensities[i] << " ";}
+  // std::cout << "\n" << std::endl;
+  //
+  // delete[] uncompressedCoef;
+  // delete[] compressedCoef;
 }

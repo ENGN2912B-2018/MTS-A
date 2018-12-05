@@ -43,33 +43,25 @@ public:
       for(int i=0; i<row_; i++){ for(int j=0; j<column_; j++){ fileContent >> data_[i][j]; } }
 
       inputFileStream.close();
-    }
+  }
 
     ~Image(){ for(int i=0; i<row_; i++){ delete[] data_[i]; } delete[] data_; }
 
     double* compress(unsigned int compressionRatio, unsigned int blockSize=8)
     {
         Image coefImage = dct();
-        // int compressionLength = (int)( (compressionRatio/100.0) * blockSize * blockSize );
-
-        double* flattenedArray = flattenArray(coefImage.data_, blockSize);
-        if(compressionRatio != 0)
-        {
-            for(int i=0; i<quantMatrix.size(); i++)
-            {
-                flattenedArray[i] = (int)( flattenedArray[i]/quantMatrix[i] );
-            }
-        }
-
-        // std::vector<int> compressionIndeces = getCompressionIndeces(flattenedArray, blockSize, compressionLength);
-
+        // flatten 2d array into 1d array.
         double* compressedCoef = new double[blockSize * blockSize];
+        double* flattenedArray = flattenArray(coefImage.data_, blockSize);
+        std::vector<int> quantVec;
+        // determine quant matrix based on compression ratio.
+        if(compressionRatio != 0 && compressionRatio < 50){ for(int i=0; i<quantMatrix.size(); i++){ quantMatrix[i] *= (int)(50/compressionRatio); } }
+        if(compressionRatio != 0 && compressionRatio > 50){ for(int i=0; i<quantMatrix.size(); i++){ quantMatrix[i] *= (int)((100-n)/compressionRatio); } }
+        // perform quantization if user requires compression.
+        if(compressionRatio != 0){ for(int i=0; i<quantMatrix.size(); i++){ flattenedArray[i] = (int)( flattenedArray[i]/quantMatrix[i] ); quantVec.push_back(flattenedArray[i]); } }
+
         if(compressionRatio != 0){ for(int i=0; i< blockSize * blockSize; i++){ compressedCoef[i] = flattenedArray[i] * quantMatrix[i]; } }
         else{ for(int i=0; i< blockSize * blockSize; i++){ compressedCoef[i] = flattenedArray[i]; } }
-        // for(int i=0; i<compressionIndeces.size(); i++)
-        // {
-        //     compressedCoef[compressionIndeces[i]] = 0;
-        // }
 
         delete[] flattenedArray;
         return compressedCoef;
@@ -109,6 +101,8 @@ public:
     58, 60, 55, 14, 13, 16, 24, 40, 57, 69, 56, 14, 17, 22, 29, 51, 87, 80, 62, 18, 22,
     37, 56, 68, 109, 103, 77, 24, 35, 55, 64, 81, 104, 113, 92, 49, 64, 78, 87, 103, 121,
     120, 101, 72, 92, 95, 98, 112, 100, 103, 99};
+    std::vector< std::vecotr<int> > pixInt;
+    std::vector< std::vector<double> > pixCoef;
 
 private:
 
