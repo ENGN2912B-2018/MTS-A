@@ -8,14 +8,13 @@
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/array.hpp>
 
-#include "image/image2.h"
+#include "image/image.h"
 #include "client/client.h"
 #include "server/server.h"
 
 using namespace client;
 using namespace server;
 
-using std::vector;
 using boost::asio::ip::tcp;
 
 
