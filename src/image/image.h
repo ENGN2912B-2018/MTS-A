@@ -10,13 +10,14 @@
 #include <algorithm>
 #include <vector>
 #include <array>
+#include "algorithm/algorithms.h"
 
 class Image
 {
 
 public:
 
-    Image(std::string const& fileName, bool binaryFlag)
+    Image(std::string fileName, bool binaryFlag)
     {
         if(binaryFlag==true)
         {
@@ -30,14 +31,16 @@ public:
 
             if( inputFile.is_open() )
             {
+                fileName_ = fileName;
                 fileSize = inputFile.tellg();
+                std::cout << "\n\nFile Size(bits): " << fileSize << std::endl;
                 memBlock = new char [fileSize];
                 inputFile.seekg(0, std::ios::beg);
                 inputFile.read(memBlock, fileSize);
 
                 while(memBlock[k] != '\n'){ temp.push_back(memBlock[k]); k += 1; }
                 std::string fileType( temp.begin(), temp.end() );
-                if(fileType != "P5"){ std::cerr << "Wrong file type, please select a binary pgm file instead." << std::endl; }
+                if(fileType != "P5"){ std::cerr << "Wrong file type, please select a binary pgm file instead." << std::endl; exit(0); }
                 temp.clear();
                 k += 1;
 
@@ -77,14 +80,15 @@ public:
                 delete[] memBlock;
                 inputFile.close();
             }
+            else{ std::cerr << "Could not open file." << std::endl; }
         }
-
         else
         {
             std::ifstream inputFile(fileName, std::ios::in);
 
             if( inputFile.is_open() )
             {
+                fileName_ = fileName;
                 std::stringstream fileContent;
                 std::string fileType;
 
@@ -96,7 +100,7 @@ public:
                 fileContent >> fileColumns_ >> fileRows_;
                 if(fileColumns_%8 != 0 || fileRows_%8 != 0){ std::cerr << "Incorrect image size." << std::endl; exit(0); }
                 fileContent >> maxIntensity_;
-                std::cout << "\nFile Type: " << fileType << std::endl;
+                std::cout << "\n\nFile Type: " << fileType << std::endl;
                 std::cout << "Rows: " << fileRows_ << "    " << "Columns: " << fileColumns_ << std::endl;
                 std::cout << "Max Intensity: " << maxIntensity_ << "\n\n";
 
@@ -116,7 +120,7 @@ public:
 
     }
 
-    void saveImage(std::string const& fileName, bool binaryFlag)
+    void saveImage(std::string fileName, bool binaryFlag)
     {
         int i, j;
 
@@ -139,6 +143,35 @@ public:
             for(i=0; i<fileRows_; i++){ for(j=0; j<fileColumns_; j++){ outputFileStream << intMatrix_[i][j] << " "; } }
 
             outputFileStream.close();
+        }
+
+    }
+
+    void sequentialCompression(std::string compressedFileFolder, bool binaryFlag)
+    {
+        statisticalAnalysis stats;
+
+        std::string compressedFileName;
+        std::vector< std::vector<int> > originalInt, compressedInt;
+
+        for(int i=0; i<100; i+=10)
+        {
+            Image originalImage(fileName_, binaryFlag);
+
+            originalInt = originalImage.intMatrix_;
+
+            originalImage.compress(i);
+            originalImage.decompress();
+
+            compressedInt = originalImage.intMatrix_;
+
+            if(binaryFlag == true){ compressedFileName = compressedFileFolder + std::to_string(i) + ".binary.pgm"; }
+            else{ compressedFileName = compressedFileFolder + std::to_string(i) + ".ascii.pgm"; }
+
+            int mse = stats.MSE(originalInt, compressedInt);
+            std::cout << "\nqRatio: "  << i << "   MSE: " << mse << std::endl;
+
+            originalImage.saveImage(compressedFileName, true);
         }
 
     }
@@ -391,5 +424,6 @@ private:
     double pi = 3.14159265358979324;
     unsigned fileRows_, fileColumns_, maxIntensity_;
     const unsigned blockSize_ = 8;
+    std::string fileName_;
 
 };

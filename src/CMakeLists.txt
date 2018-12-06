@@ -6,8 +6,7 @@ project(mainLibrary)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -pthread")
 
 # add server.hpp and server.cpp to the mainLibrary
-add_library(mainLibrary syncTCPServer.hpp syncTCPServer.cpp
-            image.h
+add_library(mainLibrary image/image.h
             client/client.h client/client.cpp
             server/server.h server/server.cpp)
 
