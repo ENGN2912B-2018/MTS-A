@@ -71,17 +71,17 @@ int main() {
   // thread1.join();
   // thread2.join();
 
-  Image testImage1("../lena.ascii.pgm", false);
-  Image testImage2("../lena5.pgm", true);
+  // Image testImage1("../lena.ascii.pgm", false);
+  Image testImage2("./images/lena5.pgm", true);
   // Image testImage2("../pepper.ascii.pgm");
-  testImage1.compress(50);
-  testImage1.decompress();
+  // testImage1.compress(50);
+  // testImage1.decompress();
 
-  testImage1.saveImage("../lenaComp70b.pgm", true);
+  testImage2.saveImage("../lena5b.pgm", true);
   // testImage2.saveImage("../pepperComp.pgm");
 
-  std::vector< std::vector<int> > vec1 = testImage1.intMatrix_;
-  // std::vector< std::vector<int> > vec2 = testImage2.intMatrix_;
+  // std::vector< std::vector<int> > vec1 = testImage1.intMatrix_;
+  std::vector< std::vector<int> > vec2 = testImage2.intMatrix_;
 
 
   // for(int i=0; i<8; i++)
@@ -94,14 +94,14 @@ int main() {
   // }
   // std::cout << "\n\n";
 
-  // for(int i=0; i<8; i++)
-  // {
-  //   for(int j=0; j<8; j++)
-  //   {
-  //     std::cout << vec2[i][j] << "  ";
-  //   }
-  //   std::cout << std::endl;
-  // }
-  // std::cout << "\n\n";
+  for(int i=0; i<8; i++)
+  {
+    for(int j=0; j<8; j++)
+    {
+      std::cout << vec2[i][j] << "  ";
+    }
+    std::cout << std::endl;
+  }
+  std::cout << "\n\n";
 
 }

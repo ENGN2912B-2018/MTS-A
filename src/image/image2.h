@@ -22,9 +22,11 @@ public:
         {
             std::ifstream inputFile(fileName, std::ios::in | std::ios::binary | std::ios::ate);
             std::streampos fileSize;
-            std::string fileType;
+            std::vector<char> temp;
             char * memBlock;
-            int i,j;
+            uint8_t pixelValue;
+            int i, j;
+            int k = 0;
 
             if( inputFile.is_open() )
             {
@@ -33,14 +35,43 @@ public:
                 inputFile.seekg(0, std::ios::beg);
                 inputFile.read(memBlock, fileSize);
 
-                for(int i=0; i<30; i++)
-                {
-                    // read ASCII headers.
-                    for(int j=0; j<16; j++)
-                    {
+                while(memBlock[k] != '\n'){ temp.push_back(memBlock[k]); k += 1; }
+                std::string fileType( temp.begin(), temp.end() );
+                if(fileType != "P5"){ std::cerr << "Wrong file type, please select a binary pgm file instead." << std::endl; }
+                temp.clear();
+                k += 1;
 
+                while(memBlock[k] != ' '){ temp.push_back(memBlock[k]); k += 1; }
+                std::string fileColumns( temp.begin(), temp.end() );
+                fileColumns_ = std::stoi(fileColumns, nullptr);
+                temp.clear();
+                k += 1;
+
+                while(memBlock[k] != '\n'){ temp.push_back(memBlock[k]); k += 1; }
+                std::string fileRows( temp.begin(), temp.end() );
+                fileRows_ = std::stoi(fileRows, nullptr);
+                temp.clear();
+                k += 1;
+
+                while(memBlock[k] != '\n'){ temp.push_back(memBlock[k]); k += 1; }
+                std::string maxIntensity( temp.begin(), temp.end() );
+                maxIntensity_ = std::stoi(maxIntensity, nullptr);
+                k += 1;
+
+                std::cout << "File Type: " << fileType << std::endl;
+                std::cout << "Columns: " << fileColumns_ << "   Rows: " << fileRows_ << std::endl;
+                std::cout << "Max Intensity: " << maxIntensity_;
+
+                setMatrices(fileRows_, fileColumns_);
+
+                for(i=0; i<fileRows_; i++)
+                {
+                    for(j=0; j<fileColumns_; j++)
+                    {
+                        pixelValue = memBlock[k];
+                        intMatrix_[i][j] = (int)pixelValue;
+                        k += 1;
                     }
-                    std::cout << memBlock[i] << " ";
                 }
 
                 delete[] memBlock;
@@ -61,7 +92,7 @@ public:
                 fileContent >> fileType;
 
                 //could also check file extension with boost filesystem instead.
-                if(fileType != "P2"){ std::cerr << "Wrong file type, please select a ASCII pgm file instead." << std::endl; exit(0); }
+                if(fileType != "P2"){ std::cerr << "Wrong file type, please select an ASCII pgm file instead." << std::endl; exit(0); }
                 fileContent >> fileColumns_ >> fileRows_;
                 if(fileColumns_%8 != 0 || fileRows_%8 != 0){ std::cerr << "Incorrect image size." << std::endl; exit(0); }
                 fileContent >> maxIntensity_;
