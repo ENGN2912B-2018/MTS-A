@@ -71,59 +71,37 @@ int main() {
   // thread1.join();
   // thread2.join();
 
-  Image testImage("../mirrordog.pgm");
+  Image testImage1("../lena.ascii.pgm", false);
+  Image testImage2("../lena5.pgm", true);
+  // Image testImage2("../pepper.ascii.pgm");
+  testImage1.compress(50);
+  testImage1.decompress();
 
-  // testImage.compress(0);
-  // testImage.decompress();
+  testImage1.saveImage("../lenaComp70b.pgm", true);
+  // testImage2.saveImage("../pepperComp.pgm");
 
-  testImage.saveImage("../mirrordog1.pgm");
+  std::vector< std::vector<int> > vec1 = testImage1.intMatrix_;
+  // std::vector< std::vector<int> > vec2 = testImage2.intMatrix_;
 
-  // std::vector< std::vector<double> > vec1 = testImage.intMatrix_;
-  // std::vector< std::vector<double> > vec2 = testImage.coefMatrix_;
-  //
-  // for(int i=0; i<16; i++)
+
+  // for(int i=0; i<8; i++)
   // {
-  //   for(int j=0; j<16; j++)
+  //   for(int j=0; j<8; j++)
   //   {
   //     std::cout << vec1[i][j] << "  ";
   //   }
   //   std::cout << std::endl;
   // }
   // std::cout << "\n\n";
-  // for(int i=0; i<16; i++)
+
+  // for(int i=0; i<8; i++)
   // {
-  //   for(int j=0; j<16; j++)
+  //   for(int j=0; j<8; j++)
   //   {
   //     std::cout << vec2[i][j] << "  ";
   //   }
   //   std::cout << std::endl;
   // }
-  // std::cout << "\n";
-  // std::vector<int> vec1 = {4,1,2,0,3,5,8};
-  // std::vector<int> vec2 = heapify(vec1);
-  // for(int i=0; i<vec2.size(); i++){ std::cout << vec2[i] << "  "; }
-  //
-  // Image testImage("../noisyImage.pgm");
-  //
-  // double* uncompressedCoef = testImage.compress(0, 8);
-  // std::cout << "\nUncompressed coefficients:" << std::endl;
-  // for(int i=0; i<20; i++){ std::cout << uncompressedCoef[i] << " ";}
-  //
-  // double* compressedCoef = testImage.compress(10, 8);
-  // std::cout << "\n\nCompressed coefficients:" << std::endl;
-  // for(int i=0; i<20; i++){ std::cout << compressedCoef[i] << " ";}
-  //
-  // Image coefImage = testImage.compress();
-  //
-  // std::vector<double> uncompressedIntensities = coefImage.decompress(uncompressedCoef, 8);
-  // std::vector<double> compressedIntensities = coefImage.decompress(compressedCoef, 8);
-  //
-  // std::cout << "\n\nUncompressed Intensities... " << std::endl;
-  // for(int i=0; i<uncompressedIntensities.size(); i++){ std::cout << uncompressedIntensities[i] << " ";}
-  // std::cout << "\n\nCompressed Intensities... " << std::endl;
-  // for(int i=0; i<compressedIntensities.size(); i++){ std::cout << compressedIntensities[i] << " ";}
-  // std::cout << "\n" << std::endl;
-  //
-  // delete[] uncompressedCoef;
-  // delete[] compressedCoef;
+  // std::cout << "\n\n";
+
 }

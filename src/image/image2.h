@@ -16,73 +16,121 @@ class Image
 
 public:
 
-    Image(std::string const& fileName)
+    Image(std::string const& fileName, bool binaryFlag)
     {
-        std::ifstream inputFileStream(fileName, std::ios::in | std::ios::binary);
-        std::stringstream fileContent;
-        std::string fileType;
-        char temp;
-
-        fileContent << inputFileStream.rdbuf();
-        fileContent >> fileType;
-
-        //could also check file extension with boost filesystem instead.
-        if(fileType != "P5" and fileType != "P2"){ std::cerr << "Wrong file type, please select a pgm file instead." << std::endl; exit(0); }
-        fileContent >> fileColumns_ >> fileRows_;
-        if(fileColumns_%8 != 0 || fileRows_%8 != 0){ std::cerr << "Incorrect image size." << std::endl; exit(0); }
-        fileContent >> maxIntensity_;
-        std::cout << "File Type: " << fileType << std::endl;
-        std::cout << "Rows: " << fileRows_ << "    " << "Columns: " << fileColumns_ << std::endl;
-        std::cout << "Max Intensity: " << maxIntensity_ << std::endl;
-
-        setMatrices(fileRows_, fileColumns_);
-
-        for(int i=0; i<fileRows_; i++)
+        if(binaryFlag==true)
         {
-            for(int j=0; j<fileColumns_; j++)
+            std::ifstream inputFile(fileName, std::ios::in | std::ios::binary | std::ios::ate);
+            std::streampos fileSize;
+            std::string fileType;
+            char * memBlock;
+            int i,j;
+
+            if( inputFile.is_open() )
             {
-                fileContent >> temp;
-                intMatrix_[i][j] = (uint32_t)(temp);
+                fileSize = inputFile.tellg();
+                memBlock = new char [fileSize];
+                inputFile.seekg(0, std::ios::beg);
+                inputFile.read(memBlock, fileSize);
+
+                for(int i=0; i<30; i++)
+                {
+                    // read ASCII headers.
+                    for(int j=0; j<16; j++)
+                    {
+
+                    }
+                    std::cout << memBlock[i] << " ";
+                }
+
+                delete[] memBlock;
+                inputFile.close();
             }
         }
 
-        inputFileStream.close();
+        else
+        {
+            std::ifstream inputFile(fileName, std::ios::in);
+
+            if( inputFile.is_open() )
+            {
+                std::stringstream fileContent;
+                std::string fileType;
+
+                fileContent << inputFile.rdbuf();
+                fileContent >> fileType;
+
+                //could also check file extension with boost filesystem instead.
+                if(fileType != "P2"){ std::cerr << "Wrong file type, please select a ASCII pgm file instead." << std::endl; exit(0); }
+                fileContent >> fileColumns_ >> fileRows_;
+                if(fileColumns_%8 != 0 || fileRows_%8 != 0){ std::cerr << "Incorrect image size." << std::endl; exit(0); }
+                fileContent >> maxIntensity_;
+                std::cout << "\nFile Type: " << fileType << std::endl;
+                std::cout << "Rows: " << fileRows_ << "    " << "Columns: " << fileColumns_ << std::endl;
+                std::cout << "Max Intensity: " << maxIntensity_ << "\n\n";
+
+                setMatrices(fileRows_, fileColumns_);
+
+                for(int i=0; i<fileRows_; i++)
+                {
+                    for(int j=0; j<fileColumns_; j++)
+                    {
+                        fileContent >> intMatrix_[i][j];
+                    }
+                }
+
+                inputFile.close();
+            }
+        }
+
     }
 
-    void saveImage(std::string const& fileName)
+    void saveImage(std::string const& fileName, bool binaryFlag)
     {
         int i, j;
-        std::ofstream outputFileStream(fileName, std::ios::out | std::ios::binary);
 
-        if( outputFileStream.is_open() )
+        if(binaryFlag == true)
         {
-            outputFileStream << "P2\n" << fileColumns_ << " " << fileRows_ << "\n" << maxIntensity_ << "\n";
+            unsigned char bits;
+            std::ofstream outputFileStream(fileName, std::ios::out | std::ios::binary);
 
-            for(i=0; i<fileRows_; i++)
-            {
-                for(j=0; j<fileColumns_; j++)
-                {
-                    outputFileStream << intMatrix_[i][i] << " ";
-                }
-            }
+            outputFileStream << "P5\n" << fileColumns_ << " " << fileRows_ << "\n" << maxIntensity_ << "\n";
+            for(i=0; i<fileRows_; i++){ for(j=0; j<fileColumns_; j++){ bits = intMatrix_[i][j]; outputFileStream << bits; } }
+
+            outputFileStream.close();
         }
 
-        outputFileStream.close();
+        else
+        {
+            std::ofstream outputFileStream(fileName, std::ios::out);
+
+            outputFileStream << "P2\n" << fileColumns_ << " " << fileRows_ << "\n" << maxIntensity_ << "\n";
+            for(i=0; i<fileRows_; i++){ for(j=0; j<fileColumns_; j++){ outputFileStream << intMatrix_[i][j] << " "; } }
+
+            outputFileStream.close();
+        }
+
     }
 
     void setMatrices(int row, int column)
     {
+        int i, j;
+
         intMatrix_.resize(row);
-        for(int i=0; i<intMatrix_.size(); i++)
+        for(i=0; i<row; i++)
         {
             intMatrix_[i].resize(column);
         }
 
+        for(i=0; i<row; i++){ for(j=0; j<column; j++){ intMatrix_[i][j]=0; } }
+
         coefMatrix_.resize(row);
-        for(int i=0; i<coefMatrix_.size(); i++)
+        for(i=0; i<row; i++)
         {
             coefMatrix_[i].resize(column);
         }
+
+        for(i=0; i<row; i++){ for(j=0; j<column; j++){ coefMatrix_[i][j]=0; } }
     }
 
     void quantization(unsigned int qRatio = 0)
@@ -174,7 +222,7 @@ public:
     std::vector< std::vector<int> > qMatrix = { {16, 11, 10, 16, 24, 40, 51, 61}, {12, 12, 14, 19, 26, 58, 60, 55},
     {14, 13, 16, 24, 40, 57, 69, 56}, {14, 17, 22, 29, 51, 87, 80, 62}, {18, 22, 37, 56, 68, 109, 103, 77},
     {24, 35, 55, 64, 81, 104, 113, 92}, {49, 64, 78, 87, 103, 121, 120, 101}, {72, 92, 95, 98, 112, 100, 103, 99} };
-    std::vector< std::vector<double> > intMatrix_;
+    std::vector< std::vector<int> > intMatrix_;
     std::vector< std::vector<double> > coefMatrix_;
 
 private:
