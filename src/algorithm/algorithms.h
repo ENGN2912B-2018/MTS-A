@@ -3,144 +3,6 @@
 #include <tuple>
 #include <cmath>
 
-// class HuffmanEncoding
-// {
-//
-// public:
-//
-//     HuffmanEncoding(std::vector<int> inputVec)
-//     {
-//         std::string tempCoef;
-//         unsigned tempUnsigned;
-//         std::tuple<std::string, unsigned> tempTuple;
-//
-//         freqTable_ = getFreqTable(inputVec);
-//         std::cout << "\nFrequency Table:\n";
-//         for(std::map<std::string, unsigned>::iterator iter = freqTable_.begin(); iter != freqTable_.end(); iter++)
-//         {
-//             tempCoef = iter -> first;
-//             tempUnsigned = iter -> second;
-//             tempTuple = {tempCoef, tempUnsigned};
-//
-//             std::cout << "Char: " << tempCoef << "   Frequency: " << tempUnsigned << std::endl;
-//             tupleVec_.push_back(tempTuple);
-//         }
-//
-//     }
-//
-//
-//     std::map<std::string, unsigned> getFreqTable(std::vector<int> inputVec)
-//     {
-//         std::string coef;
-//         std::map<std::string, unsigned> freqTable;
-//
-//         for(int i=0; i<inputVec.size(); i++)
-//         {
-//             coef = std::to_string( inputVec[i] );
-//             if( freqTable.find(coef) != freqTable.end() ){ freqTable[coef] += 1; }
-//             else{ freqTable[coef] = 1; }
-//         }
-//
-//         return freqTable;
-//     }
-//
-//     void minHeapify(int root)
-//     {
-//         int i, left, right, min;
-//         std::tuple<std::string, unsigned> temp;
-//         // consider the input array as a heap structure.
-//         min = root;
-//         left =  2 * root + 1;
-//         right = 2 * root + 2;
-//
-//         if(left < tupleVec_.size() && std::get<1>( tupleVec_[left] ) < std::min( std::get<1>( tupleVec_[root] ), std::get<1>( tupleVec_[right] ) ) ){ min = left; }
-//         else if(right < tupleVec_.size() && std::get<1>( tupleVec_[right] ) < std::min( std::get<1>( tupleVec_[root] ), std::get<1>( tupleVec_[left]) ) ){ min = right; }
-//         else{ return; }
-//
-//         temp = tupleVec_[min];
-//         tupleVec_[min] = tupleVec_[root];
-//         tupleVec_[root] = temp;
-//
-//         minHeapify(min);
-//     }
-//
-//     void maxHeapify(int root)
-//     {
-//         int i, left, right, max, unswapped;
-//         std::tuple<std::string, unsigned> temp;
-//         // consider the input array as a heap structure.
-//         max = root;
-//         left =  2 * root + 1;
-//         right = 2 * root + 2;
-//
-//         if(left < HuffmanTree_.size() && std::get<1>( HuffmanTree_[left] ) > std::max( std::get<1>( HuffmanTree_[root] ), std::get<1>( HuffmanTree_[right] ) ) ){ max = left; unswapped = right; }
-//         else if(right < HuffmanTree_.size() && std::get<1>( HuffmanTree_[right] ) > std::max( std::get<1>( HuffmanTree_[root] ), std::get<1>( HuffmanTree_[left]) ) ){ max = right; unswapped = left; }
-//         else{ return; }
-//
-//         // swap max the rooot.
-//         temp = HuffmanTree_[max];
-//         HuffmanTree_[max] = HuffmanTree_[root];
-//         HuffmanTree_[root] = temp;
-//         // swap children for binary property.
-//         if( std::get<1>( HuffmanTree_[max] ) < std::get<1>( HuffmanTree_[unswapped] ) )
-//         {
-//             temp = HuffmanTree_[unswapped];
-//             HuffmanTree_[unswapped] = HuffmanTree_[max];
-//             HuffmanTree_[max] = temp;
-//         }
-//         else{;}
-//
-//         maxHeapify(max);
-//     }
-//
-//     void maxHeapify()
-//     {
-//         for(int i=HuffmanTree_.size()-1; i>-1; i--){ maxHeapify(i); }
-//         std::cout<< "Maximum Frequency: " << std::get<1>(HuffmanTree_[0]) << "  " << std::get<1>(HuffmanTree_[1]) << "  " << std::get<1>(HuffmanTree_[2]) << std::endl;
-//         std::cout<< "Maximum Frequency: " << std::get<1>(HuffmanTree_[3]) << "  " << std::get<1>(HuffmanTree_[4]) << "  " << std::get<1>(HuffmanTree_[5]) << std::endl;
-//     }
-//
-//     void minHeapify()
-//     {
-//         for(int i=tupleVec_.size()-1; i>-1; i--){ minHeapify(i); }
-//         std::cout<< "Minimum Frequency: " << std::get<1>(tupleVec_[0]) << std::endl;
-//     }
-//
-//     void getHuffmanTree()
-//     {
-//         unsigned freq;
-//         std::string tempString;
-//         std::tuple<std::string, unsigned> treeNode, minTuple1, minTuple2;
-//
-//         HuffmanTree_ = tupleVec_;
-//
-//         while(tupleVec_.size() > 1)
-//         {
-//             minHeapify();
-//             minTuple1 = tupleVec_[0];
-//             tupleVec_.erase( tupleVec_.begin() );
-//             minHeapify();
-//             minTuple2 = tupleVec_[0];
-//             tupleVec_.erase( tupleVec_.begin() );
-//
-//             tempString = std::get<0>(minTuple1) + "," + std::get<0>(minTuple2);
-//             freq = std::get<1>(minTuple1) + std::get<1>(minTuple2);
-//             treeNode = {tempString, freq};
-//
-//             std::cout << "String: " << tempString << "   Frequency: " << freq << std::endl;
-//             tupleVec_.push_back(treeNode);
-//             HuffmanTree_.push_back(treeNode);
-//         }
-//     }
-//
-// private:
-//
-//     std::map<std::string, unsigned> freqTable_;
-//     std::vector< std::tuple<std::string, unsigned> > tupleVec_;
-//     std::vector< std::tuple<std::string, unsigned> > HuffmanTree_;
-// };
-
-
 class statisticalAnalysis
 {
 public:
@@ -178,203 +40,217 @@ private:
 };
 
 
-// Same implementations as heap sort until Huffman tree part.
-struct node
+class HuffmanCoding
 {
-    char coef_;
-    unsigned freq_;
 
-    struct node* left;
-    struct node* right;
-};
+public:
 
-struct minHeap
-{
-    unsigned size_;
-    unsigned capacity_;
-
-    struct node** nodeArray;
-};
-
-node* newNode(char coef, unsigned freq)
-{
-    node* newNode;
-    newNode = new node;
-
-    newNode -> coef_ = coef;
-    newNode -> freq_ = freq;
-    newNode -> left = newNode -> right = NULL;
-
-    return newNode;
-};
-
-minHeap* newMinHeap(unsigned capacity)
-{
-    minHeap* newHeap;
-    newHeap = new minHeap;
-
-    newHeap -> capacity_ = capacity;
-    newHeap -> nodeArray = new node* [capacity];
-
-    return newHeap;
-};
-
-void swapNodes(struct node** node1, struct node** node2)
-{
-    struct node* tempNode;
-
-    tempNode = *node1;
-    *node1 = *node2;
-    *node2 = tempNode;
-};
-
-void minHeapify(struct minHeap* minHeap, int parentNode)
-{
-    int min, left, right;
-
-    min = parentNode;
-    left = 2 * parentNode + 1;
-    right = 2 * parentNode + 2;
-
-    if(left < minHeap->size_ && minHeap->nodeArray[left]->freq_ < minHeap->nodeArray[parentNode]->freq_){ min = left; }
-    if(right < minHeap->size_ && minHeap->nodeArray[right]->freq_ < minHeap->nodeArray[min]->freq_){ min = right; }
-    if(min != parentNode)
+    void encode(std::vector<int> coefVec, std::vector<std::string>* HuffmanVector)
     {
-        swapNodes(&minHeap->nodeArray[min], &minHeap->nodeArray[parentNode]);
-        std::cout << "\nSwapped " << minHeap->nodeArray[min]->freq_ << " with " << minHeap->nodeArray[parentNode]->freq_ << std::endl;
-        minHeapify(minHeap, min);
+        getHuffmanCodes(coefVec, HuffmanVector);
     }
 
-};
-
-void buildMinHeap(struct minHeap* minHeap)
-{
-    int length = minHeap->size_ - 1;
-
-    for(int i = (length-1)/2; i > -1; i--){ minHeapify(minHeap, i); }
-};
-
-struct node* extraMinNode(struct minHeap* minHeap)
-{
-    struct node* minNode;
-
-    minNode = minHeap->nodeArray[0];
-
-    minHeap->nodeArray[0] = minHeap->nodeArray[minHeap->size_ - 1];
-    minHeap->size_ -= 1;
-    minHeapify(minHeap, 0);
-
-    return minNode;
-};
-
-void insertNode(struct minHeap* minHeap, struct node* node)
-{
-    minHeap->size_ += 1;
-    int i = minHeap->size_ - 1;
-    std::cout << "\nInserted node with frequency " << node->freq_ << std::endl;
-    // make sure that look up time is log(N).
-    while(i && node->freq_ < minHeap->nodeArray[(i-1)/2]->freq_)
+private:
+    // Same implementations as heap sort until Huffman tree part.
+    struct node
     {
-        minHeap->nodeArray[i] = minHeap->nodeArray[(i-1)/2];
-        i = (i - 1)/2;
+        char coef_;
+        unsigned freq_;
+
+        struct node* left;
+        struct node* right;
+    };
+
+    struct minHeap
+    {
+        unsigned size_;
+        unsigned capacity_;
+
+        struct node** nodeArray;
+    };
+
+    node* newNode(char coef, unsigned freq)
+    {
+        node* newNode;
+        newNode = new node;
+
+        newNode -> coef_ = coef;
+        newNode -> freq_ = freq;
+        newNode -> left = newNode -> right = NULL;
+
+        return newNode;
     }
 
-    minHeap->nodeArray[i] = node;
-};
-
-
-struct minHeap* vecToHeap(std::vector<int> coefVec)
-{
-    char coef;
-    std::map<char, unsigned> freqTable;
-
-    for(int i=0; i<coefVec.size(); i++)
+    minHeap* newMinHeap(unsigned capacity)
     {
-        coef = static_cast<char>( coefVec[i] );
-        if( freqTable.find(coef) != freqTable.end() ){ freqTable[coef] += 1; }
-        else{ freqTable[coef] = 1; }
+        minHeap* newHeap;
+        newHeap = new minHeap;
+
+        newHeap -> capacity_ = capacity;
+        newHeap -> nodeArray = new node* [capacity];
+
+        return newHeap;
     }
 
-    int i = 0;
-    struct minHeap* minHeap = newMinHeap( coefVec.size() );
-
-    for(std::map<char, unsigned>::iterator iter = freqTable.begin(); iter != freqTable.end(); iter++)
+    void swapNodes(struct node** node1, struct node** node2)
     {
-        std::cout << "Coefficient: " << (int)(iter->first) << "  Frequency: " << iter->second << std::endl;
-        minHeap->nodeArray[i] = newNode( iter->first, iter->second );
-        i += 1;
+        struct node* tempNode;
+
+        tempNode = *node1;
+        *node1 = *node2;
+        *node2 = tempNode;
     }
 
-    minHeap->size_ = i;
-    std::cout << "Heap Size: " << i << std::endl;
-    std::cout << "Last Node: " << (int)(minHeap->nodeArray[i-1]->coef_) << std::endl;
-    buildMinHeap(minHeap);
-    std::cout << "Heap Built.\n\n" << std::endl;
-    return minHeap;
-};
-
-/*
- Now the Huffman tree algorithm.
-    1. Build min heap from Frequency table.
-    2. While min heap has more than 1 element, select two nodes with minimum frequency
-        and add the sum as a new node.
-    3. Return the root of the Huffman tree.
-*/
-struct node* buildHuffmanTree(std::vector<int> coefVec)
-{
-    struct minHeap* minHeap = vecToHeap(coefVec);
-
-    while(minHeap->size_ > 1)
+    void minHeapify(struct minHeap* minHeap, int parentNode)
     {
-        struct node *leftChildNode, *rightChildNode;
-        struct node* parentNode;
+        int min, left, right;
 
-        // left child should have smaller frequency because left traversal adds 0 to the bit stream.
-        leftChildNode = extraMinNode(minHeap);
-        std::cout << "\nMin frequency: " << leftChildNode->freq_;
-        rightChildNode = extraMinNode(minHeap);
-        std::cout << "\nMin frequency: " << rightChildNode->freq_;
-        unsigned sum_freq = leftChildNode->freq_ + rightChildNode->freq_;
-        // nodes with mixed chars don't matter so just use one unique char.
-        parentNode = newNode('^', sum_freq);
-        parentNode->left = leftChildNode;
-        parentNode->right = rightChildNode;
+        min = parentNode;
+        left = 2 * parentNode + 1;
+        right = 2 * parentNode + 2;
 
-        insertNode(minHeap, parentNode);
-        std::cout << "Heap Size: " << minHeap->size_ << std::endl;
+        if(left < minHeap->size_ && minHeap->nodeArray[left]->freq_ < minHeap->nodeArray[parentNode]->freq_){ min = left; }
+        if(right < minHeap->size_ && minHeap->nodeArray[right]->freq_ < minHeap->nodeArray[min]->freq_){ min = right; }
+        if(min != parentNode)
+        {
+            swapNodes(&minHeap->nodeArray[min], &minHeap->nodeArray[parentNode]);
+            std::cout << "\nSwapped " << minHeap->nodeArray[min]->freq_ << " with " << minHeap->nodeArray[parentNode]->freq_ << std::endl;
+            minHeapify(minHeap, min);
+        }
+
     }
 
-    return extraMinNode(minHeap);
-};
+    void buildMinHeap(struct minHeap* minHeap)
+    {
+        int length = minHeap->size_ - 1;
 
-void dfs(struct node* root, std::string str, int i)
-{
+        for(int i = (length-1)/2; i > -1; i--){ minHeapify(minHeap, i); }
+    };
 
-  if(root->left)
-  {
-    str[i] = '0';
-    dfs(root->left, str, i+1);
-  }
+    struct node* extraMinNode(struct minHeap* minHeap)
+    {
+        struct node* minNode;
 
-  if(root->right)
-  {
-    str[i] = '1';
-    dfs(root->right, str, i+1);
-  }
+        minNode = minHeap->nodeArray[0];
 
-  if(root->coef_ != '^')
-  {
-    std::cout << "Coefficient: " << (int)root->coef_ << "   Huffman Code: " << str << std::endl;
-  }
+        minHeap->nodeArray[0] = minHeap->nodeArray[minHeap->size_ - 1];
+        minHeap->size_ -= 1;
+        minHeapify(minHeap, 0);
 
-};
+        return minNode;
+    }
 
-void getHuffmanCodes(std::vector<int> coefVec)
-{
-    size_t size = coefVec.size();
-    std::string HuffmanString(size, ' ');
+    void insertNode(struct minHeap* minHeap, struct node* node)
+    {
+        minHeap->size_ += 1;
+        int i = minHeap->size_ - 1;
+        std::cout << "\nInserted node with frequency " << node->freq_ << std::endl;
+        // make sure that look up time is log(N).
+        while(i && node->freq_ < minHeap->nodeArray[(i-1)/2]->freq_)
+        {
+            minHeap->nodeArray[i] = minHeap->nodeArray[(i-1)/2];
+            i = (i - 1)/2;
+        }
 
-    struct node* HuffmanRoot = buildHuffmanTree(coefVec);
+        minHeap->nodeArray[i] = node;
+    }
 
-    dfs(HuffmanRoot, HuffmanString, 0);
+
+    struct minHeap* vecToHeap(std::vector<int> coefVec)
+    {
+        char coef;
+        std::map<char, unsigned> freqTable;
+
+        for(int i=0; i<coefVec.size(); i++)
+        {
+            coef = static_cast<char>( coefVec[i] );
+            if( freqTable.find(coef) != freqTable.end() ){ freqTable[coef] += 1; }
+            else{ freqTable[coef] = 1; }
+        }
+
+        int i = 0;
+        struct minHeap* minHeap = newMinHeap( coefVec.size() );
+
+        for(std::map<char, unsigned>::iterator iter = freqTable.begin(); iter != freqTable.end(); iter++)
+        {
+            std::cout << "Coefficient: " << (int)(iter->first) << "  Frequency: " << iter->second << std::endl;
+            minHeap->nodeArray[i] = newNode( iter->first, iter->second );
+            i += 1;
+        }
+
+        minHeap->size_ = i;
+        std::cout << "Heap Size: " << i << std::endl;
+        std::cout << "Last Node: " << (int)(minHeap->nodeArray[i-1]->coef_) << std::endl;
+        buildMinHeap(minHeap);
+        std::cout << "Heap Built.\n\n" << std::endl;
+        return minHeap;
+    }
+
+    /*
+     Now the Huffman tree algorithm.
+        1. Build min heap from Frequency table.
+        2. While min heap has more than 1 element, select two nodes with minimum frequency
+            and add the sum as a new node.
+        3. Return the root of the Huffman tree.
+    */
+    struct node* buildHuffmanTree(std::vector<int> coefVec)
+    {
+        struct minHeap* minHeap = vecToHeap(coefVec);
+
+        while(minHeap->size_ > 1)
+        {
+            struct node *leftChildNode, *rightChildNode;
+            struct node* parentNode;
+
+            // left child should have smaller frequency because left traversal adds 0 to the bit stream.
+            leftChildNode = extraMinNode(minHeap);
+            std::cout << "\nMin frequency: " << leftChildNode->freq_;
+            rightChildNode = extraMinNode(minHeap);
+            std::cout << "\nMin frequency: " << rightChildNode->freq_;
+            unsigned sum_freq = leftChildNode->freq_ + rightChildNode->freq_;
+            // nodes with mixed chars don't matter so just use one unique char.
+            parentNode = newNode('^', sum_freq);
+            parentNode->left = leftChildNode;
+            parentNode->right = rightChildNode;
+
+            insertNode(minHeap, parentNode);
+            std::cout << "Heap Size: " << minHeap->size_ << std::endl;
+        }
+
+        return extraMinNode(minHeap);
+    }
+
+    void dfs(struct node* root, std::vector<std::string>* vec, std::string str, int i)
+    {
+
+      if(root->left)
+      {
+        str[i] = '0';
+        dfs(root->left, vec, str, i+1);
+      }
+
+      if(root->right)
+      {
+        str[i] = '1';
+        dfs(root->right, vec, str, i+1);
+      }
+
+      if(root->coef_ != '^')
+      {
+        std::cout << "Coefficient: " << (int)root->coef_ << "   Huffman Code: " << str << std::endl;
+        (*vec).push_back(str);
+      }
+
+    }
+
+    void getHuffmanCodes(std::vector<int> coefVec, std::vector<std::string>* HuffmanVector)
+    {
+        size_t size = coefVec.size();
+        std::string HuffmanString(size, ' ');
+
+        struct node* HuffmanRoot = buildHuffmanTree(coefVec);
+
+        dfs(HuffmanRoot, HuffmanVector, HuffmanString, 0);
+    }
+
 };

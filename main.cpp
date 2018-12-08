@@ -71,8 +71,15 @@ int main() {
   // thread2.join();
 
   std::vector<int> coefVec = {7, 7, 7, 7, 7, 7, 7, 5, 4, 4, 3, 3, 3, 2, 2, 2, 2, 1, 1, 1, 1, 1};
+  std::vector<std::string> HuffmanVec;
 
-  getHuffmanCodes(coefVec);;
+  HuffmanCoding Huffman;
+  Huffman.encode(coefVec, &HuffmanVec);
+
+  for(int i=0; i<HuffmanVec.size(); i++)
+  {
+    std::cout << HuffmanVec[i] << std::endl;
+  }
 
   // Image testImage("../images/pepper.ascii.pgm", false);
   //
