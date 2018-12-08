@@ -1,6 +1,5 @@
 #pragma once
 
-#include "imageFunctions.h"
 #include <fstream>
 #include <sstream>
 #include <cmath>
@@ -130,7 +129,7 @@ public:
             std::ofstream outputFileStream(fileName, std::ios::out | std::ios::binary);
 
             outputFileStream << "P5\n" << fileColumns_ << " " << fileRows_ << "\n" << maxIntensity_ << "\n";
-            for(i=0; i<fileRows_; i++){ for(j=0; j<fileColumns_; j++){ bits = intMatrix_[i][j]; outputFileStream << bits; } }
+            for(i=0; i<fileRows_; i++){ for(j=0; j<fileColumns_; j++){ bits = compIntMatrix_[i][j]; outputFileStream << bits; } }
 
             outputFileStream.close();
         }
@@ -140,7 +139,7 @@ public:
             std::ofstream outputFileStream(fileName, std::ios::out);
 
             outputFileStream << "P2\n" << fileColumns_ << " " << fileRows_ << "\n" << maxIntensity_ << "\n";
-            for(i=0; i<fileRows_; i++){ for(j=0; j<fileColumns_; j++){ outputFileStream << intMatrix_[i][j] << " "; } }
+            for(i=0; i<fileRows_; i++){ for(j=0; j<fileColumns_; j++){ outputFileStream << compIntMatrix_[i][j] << " "; } }
 
             outputFileStream.close();
         }
@@ -156,22 +155,19 @@ public:
 
         for(int i=0; i<100; i+=10)
         {
-            Image originalImage(fileName_, binaryFlag);
-
-            originalInt = originalImage.intMatrix_;
-
-            originalImage.compress(i);
-            originalImage.decompress();
-
-            compressedInt = originalImage.intMatrix_;
+            compress(i);
+            decompress();
 
             if(binaryFlag == true){ compressedFileName = compressedFileFolder + std::to_string(i) + ".binary.pgm"; }
             else{ compressedFileName = compressedFileFolder + std::to_string(i) + ".ascii.pgm"; }
 
-            int mse = stats.MSE(originalInt, compressedInt);
+            double mse = stats.MSE(intMatrix_, compIntMatrix_);
             std::cout << "\nqRatio: "  << i << "   MSE: " << mse << std::endl;
 
-            originalImage.saveImage(compressedFileName, true);
+            double psnr = stats.PSNR(maxIntensity_, mse);
+            std::cout << "\nqRatio: "  << i << "   PSNR: " << psnr << std::endl;
+
+            saveImage(compressedFileName, true);
         }
 
     }
@@ -186,7 +182,11 @@ public:
             intMatrix_[i].resize(column);
         }
 
-        for(i=0; i<row; i++){ for(j=0; j<column; j++){ intMatrix_[i][j]=0; } }
+        compIntMatrix_.resize(row);
+        for(i=0; i<row; i++)
+        {
+            compIntMatrix_[i].resize(column);
+        }
 
         coefMatrix_.resize(row);
         for(i=0; i<row; i++)
@@ -194,7 +194,6 @@ public:
             coefMatrix_[i].resize(column);
         }
 
-        for(i=0; i<row; i++){ for(j=0; j<column; j++){ coefMatrix_[i][j]=0; } }
     }
 
     void quantization(unsigned int qRatio = 0)
@@ -283,10 +282,16 @@ public:
         idct(coefMatrix);
     }
 
+    void getCoef()
+    {
+
+    }
+
     std::vector< std::vector<int> > qMatrix = { {16, 11, 10, 16, 24, 40, 51, 61}, {12, 12, 14, 19, 26, 58, 60, 55},
     {14, 13, 16, 24, 40, 57, 69, 56}, {14, 17, 22, 29, 51, 87, 80, 62}, {18, 22, 37, 56, 68, 109, 103, 77},
     {24, 35, 55, 64, 81, 104, 113, 92}, {49, 64, 78, 87, 103, 121, 120, 101}, {72, 92, 95, 98, 112, 100, 103, 99} };
     std::vector< std::vector<int> > intMatrix_;
+    std::vector< std::vector<int> > compIntMatrix_;
     std::vector< std::vector<double> > coefMatrix_;
 
 private:
@@ -372,7 +377,7 @@ private:
                     }
                 }
 
-            intMatrix_[i][j] = (int)(sum);
+            compIntMatrix_[i][j] = (int)(sum);
             }
         }
 
@@ -415,7 +420,7 @@ private:
                     }
                 }
 
-            intMatrix_[i][j] = (int)(sum);
+            compIntMatrix_[i][j] = (int)(sum);
             }
         }
 

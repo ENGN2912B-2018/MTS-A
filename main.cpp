@@ -70,24 +70,29 @@ int main() {
   // thread1.join();
   // thread2.join();
 
-  // Image testImage("../images/lena.binary.pgm", true);
-  // 
-  // testImage.sequentialCompression("../images/lena/", true);
+  // std::vector<int> inputVec = {7, 7, 7, 7, 7, 7, 7, 5, 4, 4, 3, 3, 3, 2, 2, 2, 2, 1, 1, 1, 1, 1};
+  //
+  // HuffmanEncoding huffman(inputVec);
+  //
+  // huffman.getHuffmanTree();
+  // huffman.maxHeapify();
+
+  // Image testImage("../images/pepper.ascii.pgm", false);
+  //
+  // testImage.sequentialCompression("../images/pepper/", true);
 
   statisticalAnalysis stats;
   Image testImage1("../images/dog.binary.pgm", true);
 
-  std::vector< std::vector<int> > originalInt = testImage1.intMatrix_;
-
   testImage1.compress(70);
   testImage1.decompress();
 
-  std::vector< std::vector<int> > compressedInt = testImage1.intMatrix_;
-
   testImage1.saveImage("../images/dog/dog70.binary.pgm", true);
 
-  int mse = stats.MSE(originalInt, compressedInt);
-  std::cout << "mse: " << mse << std::endl;
+  int mse = stats.MSE(testImage1.intMatrix_, testImage1.compIntMatrix_);
+  std::cout << "\nmse: " << mse << std::endl;
 
+  double psnr = stats.PSNR(255, mse);
+  std::cout << "psnr: " << psnr << std::endl;
 
 }
