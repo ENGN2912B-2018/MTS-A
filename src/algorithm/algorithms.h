@@ -1,6 +1,7 @@
 #pragma once
 
 #include <tuple>
+#include <bitset>
 #include <cmath>
 
 class statisticalAnalysis
@@ -45,10 +46,38 @@ class HuffmanCoding
 
 public:
 
-    void encode(std::vector<int> coefVec, std::vector<std::string>* HuffmanVector)
+    std::vector< std::vector<bool> > encode(std::vector<int> coefVec)
     {
-        getHuffmanCodes(coefVec, HuffmanVector);
+        std::string HuffmanString;
+        std::vector<bool> bitsVec;
+        std::vector< std::vector<bool> > HuffmanBitsVec;
+
+        getHuffmanCodes(coefVec, &HuffmanVec_);
+
+        for(int i=0; i<HuffmanVec_.size(); i++)
+        {
+            HuffmanString = HuffmanVec_[i];
+
+            bitsVec = getBitsVec( HuffmanString );
+            HuffmanBitsVec.push_back(bitsVec);
+        }
+
+        return HuffmanBitsVec;
     }
+
+    std::vector<int> decode( std::vector< std::vector<bool> > HuffmanBitsVec)
+    {
+        std::vector<int> coefVec;
+
+        for(int i=0; i<HuffmanBitsVec.size(); i++)
+        {
+            std::cout << "Coefficient: " << decode(HuffmanBitsVec[i]) << std::endl;
+            coefVec.push_back( decode(HuffmanBitsVec[i]) );
+        }
+
+        return coefVec;
+    }
+
 
 private:
     // Same implementations as heap sort until Huffman tree part.
@@ -114,7 +143,6 @@ private:
         if(min != parentNode)
         {
             swapNodes(&minHeap->nodeArray[min], &minHeap->nodeArray[parentNode]);
-            std::cout << "\nSwapped " << minHeap->nodeArray[min]->freq_ << " with " << minHeap->nodeArray[parentNode]->freq_ << std::endl;
             minHeapify(minHeap, min);
         }
 
@@ -144,7 +172,6 @@ private:
     {
         minHeap->size_ += 1;
         int i = minHeap->size_ - 1;
-        std::cout << "\nInserted node with frequency " << node->freq_ << std::endl;
         // make sure that look up time is log(N).
         while(i && node->freq_ < minHeap->nodeArray[(i-1)/2]->freq_)
         {
@@ -173,16 +200,13 @@ private:
 
         for(std::map<char, unsigned>::iterator iter = freqTable.begin(); iter != freqTable.end(); iter++)
         {
-            std::cout << "Coefficient: " << (int)(iter->first) << "  Frequency: " << iter->second << std::endl;
             minHeap->nodeArray[i] = newNode( iter->first, iter->second );
             i += 1;
         }
 
         minHeap->size_ = i;
-        std::cout << "Heap Size: " << i << std::endl;
-        std::cout << "Last Node: " << (int)(minHeap->nodeArray[i-1]->coef_) << std::endl;
         buildMinHeap(minHeap);
-        std::cout << "Heap Built.\n\n" << std::endl;
+
         return minHeap;
     }
 
@@ -204,9 +228,7 @@ private:
 
             // left child should have smaller frequency because left traversal adds 0 to the bit stream.
             leftChildNode = extraMinNode(minHeap);
-            std::cout << "\nMin frequency: " << leftChildNode->freq_;
             rightChildNode = extraMinNode(minHeap);
-            std::cout << "\nMin frequency: " << rightChildNode->freq_;
             unsigned sum_freq = leftChildNode->freq_ + rightChildNode->freq_;
             // nodes with mixed chars don't matter so just use one unique char.
             parentNode = newNode('^', sum_freq);
@@ -214,7 +236,6 @@ private:
             parentNode->right = rightChildNode;
 
             insertNode(minHeap, parentNode);
-            std::cout << "Heap Size: " << minHeap->size_ << std::endl;
         }
 
         return extraMinNode(minHeap);
@@ -237,7 +258,7 @@ private:
 
       if(root->coef_ != '^')
       {
-        std::cout << "Coefficient: " << (int)root->coef_ << "   Huffman Code: " << str << std::endl;
+        std::cout << "Coefficient: " << (int)root->coef_ << "  Frequency: " << root->freq_ << "  Huffman Code: " << str << std::endl;
         (*vec).push_back(str);
       }
 
@@ -248,9 +269,44 @@ private:
         size_t size = coefVec.size();
         std::string HuffmanString(size, ' ');
 
-        struct node* HuffmanRoot = buildHuffmanTree(coefVec);
+        HuffmanRoot_ = buildHuffmanTree(coefVec);
 
-        dfs(HuffmanRoot, HuffmanVector, HuffmanString, 0);
+        dfs(HuffmanRoot_, HuffmanVector, HuffmanString, 0);
     }
 
+    std::vector<bool> getBitsVec(std::string HuffmanString)
+    {
+        int i=0;
+        std::vector<bool> bitsVec;
+
+        while(HuffmanString[i] != ' ')
+        {
+            if(HuffmanString[i] == '0'){ bitsVec.push_back(false); }
+            else{ bitsVec.push_back(true); }
+
+            i += 1;
+         }
+
+        return bitsVec;
+    }
+
+    // decode method should take in a bits vector and find the coefficient based on
+    // the Huffman tree.
+    int decode(std::vector<bool> bitsVec)
+    {
+        struct node* node = HuffmanRoot_;
+
+        // since Huffman is prefix, decoding is unique and we just traverse through the tree.
+        for(int i=0; i<bitsVec.size(); i++)
+        {
+            if(bitsVec[i] == false){ node = node -> left; }
+            else{ node = node -> right; }
+
+        }
+
+        return node->coef_;
+    }
+
+    std::vector<std::string> HuffmanVec_;
+    struct node* HuffmanRoot_;
 };

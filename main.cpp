@@ -64,39 +64,38 @@ void runServer() {
 }
 
 int main() {
+
   // std::thread thread1(runServer);
   // std::thread thread2(runClient);
-  //
+
   // thread1.join();
   // thread2.join();
 
-  std::vector<int> coefVec = {7, 7, 7, 7, 7, 7, 7, 5, 4, 4, 3, 3, 3, 2, 2, 2, 2, 1, 1, 1, 1, 1};
-  std::vector<std::string> HuffmanVec;
+  // Vector of compressed coefficients.
+  std::vector<int> coefVec = {7, 7, 7, 7, 7, 7, 7, 5, 4, 4, 4, 5, 3, 3, 3, 3, 2, 2, 2, 2, 1, 1, 1, 1, 1, 0};
+  // Vector of Huffman codes(stored as a vector of booleans).
+  std::vector< std::vector<bool> > HuffmanCodes;
 
   HuffmanCoding Huffman;
-  Huffman.encode(coefVec, &HuffmanVec);
 
-  for(int i=0; i<HuffmanVec.size(); i++)
-  {
-    std::cout << HuffmanVec[i] << std::endl;
-  }
+  HuffmanCodes = Huffman.encode(coefVec);
+  std::vector<int> coefVec2 = Huffman.decode(HuffmanCodes);
 
   // Image testImage("../images/pepper.ascii.pgm", false);
-  //
+
   // testImage.sequentialCompression("../images/pepper/", true);
 
   // statisticalAnalysis stats;
   // Image testImage1("../images/dog.binary.pgm", true);
-  //
+
   // testImage1.compress(70);
   // testImage1.decompress();
-  //
+
   // testImage1.saveImage("../images/dog/dog70.binary.pgm", true);
-  //
+
   // int mse = stats.MSE(testImage1.intMatrix_, testImage1.compIntMatrix_);
   // std::cout << "\nmse: " << mse << std::endl;
-  //
+
   // double psnr = stats.PSNR(255, mse);
   // std::cout << "psnr: " << psnr << std::endl;
-
 }
