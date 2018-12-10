@@ -63,6 +63,7 @@ void runServer() {
 
 }
 
+
 int main() {
 
   // std::thread thread1(runServer);
@@ -71,24 +72,33 @@ int main() {
   // thread1.join();
   // thread2.join();
 
-  // Vector of compressed coefficients.
-  std::vector<int> coefVec = {7, 7, 7, 7, 7, 7, 7, 5, 4, 4, 4, 5, 3, 3, 3, 3, 2, 2, 2, 2, 1, 1, 1, 1, 1, 0};
-  // Vector of Huffman codes(stored as a vector of booleans).
-  std::vector< std::vector<bool> > HuffmanCodes;
-
-  HuffmanCoding Huffman;
-
-  HuffmanCodes = Huffman.encode(coefVec);
-  std::vector<int> coefVec2 = Huffman.decode(HuffmanCodes);
-
   // Image testImage("../images/pepper.ascii.pgm", false);
 
   // testImage.sequentialCompression("../images/pepper/", true);
 
   // statisticalAnalysis stats;
-  // Image testImage1("../images/dog.binary.pgm", true);
 
-  // testImage1.compress(70);
+
+  std::vector<int> HuffmanVec;
+  std::vector< std::vector<bool> > HuffmanCodes;
+
+  HuffmanCoding Huffman;
+  Image testImage1("../images/dog.binary.pgm", true);
+
+  // compress performs both dct and quantization.
+  testImage1.compress(50);
+  // zigzag scan creates a matrix of coefficients scanned in zigzag fashion block by block.
+  HuffmanVec = testImage1.zigzagScan();
+
+  HuffmanCodes = Huffman.encode(HuffmanVec);
+
+  std::vector<int> coefVec = Huffman.decode(HuffmanCodes);
+
+  for(int i=0; i<30; i++){ std::cout << HuffmanVec[i] << " "; }
+  std::cout << "\n\n";
+
+  for(int i=0; i<30; i++){ std::cout << coefVec[i] << " "; }
+  std::cout << "\n";
   // testImage1.decompress();
 
   // testImage1.saveImage("../images/dog/dog70.binary.pgm", true);

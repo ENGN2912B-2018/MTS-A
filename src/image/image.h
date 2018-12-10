@@ -32,7 +32,7 @@ public:
             {
                 fileName_ = fileName;
                 fileSize = inputFile.tellg();
-                std::cout << "\n\nFile Size(bits): " << fileSize << std::endl;
+                std::cout << "\nFile Size(bits): " << fileSize << std::endl;
                 memBlock = new char [fileSize];
                 inputFile.seekg(0, std::ios::beg);
                 inputFile.read(memBlock, fileSize);
@@ -62,7 +62,7 @@ public:
 
                 std::cout << "File Type: " << fileType << std::endl;
                 std::cout << "Columns: " << fileColumns_ << "   Rows: " << fileRows_ << std::endl;
-                std::cout << "Max Intensity: " << maxIntensity_;
+                std::cout << "Max Intensity: " << maxIntensity_ << "\n" << std::endl;
 
                 setMatrices(fileRows_, fileColumns_);
 
@@ -282,17 +282,88 @@ public:
         idct(coefMatrix);
     }
 
-    void getCoef()
+    // it's not exactly the zigzag scan people use but I think this is a sufficient short cut.
+    std::vector<int> zigzagScan(unsigned start_row, unsigned start_column)
     {
+        int j, coefficient;
+        int zeroCount = 0;
+        int i = start_row, k = start_row;
 
+        std::vector<int> zigzagCoefVec;
+
+        while(k < start_row + blockSize_)
+        {
+            while(i <= k)
+            {
+                j = k - i + start_column;
+                coefficient = coefMatrix_[i][j];
+
+                if(coefficient == 0)
+                {
+                    // stop scanning as soon as we get five zero coefficients and do 0 padding.
+                    // push 1021 to the end to represent end of block since the theoretical max is 1020.
+                    if(zeroCount >= 5)
+                    {
+                        zigzagCoefVec.push_back(2220);
+                        return zigzagCoefVec;
+                    }
+                    else
+                    {
+                        zigzagCoefVec.push_back(0);
+                        zeroCount += 1;
+                    }
+
+                }
+                else
+                {
+                    zigzagCoefVec.push_back( coefficient );
+                    i += 1;
+                }
+
+            }
+
+            k += 1;
+            i = start_row;
+            zeroCount = 0;
+        }
+
+        return zigzagCoefVec;
     }
+
+    std::vector<int> zigzagScan()
+    {
+        int i, j;
+        std::vector<int> zigzagCoefVec;
+
+        for(i=0; i < fileRows_/8; i++)
+        {
+            for(j=0; j < fileColumns_/8; j++)
+            {
+                zigzagCoefVec = zigzagScan(8*i, 8*j);
+                zigzagCoefMatrix_.push_back( zigzagCoefVec );
+            }
+        }
+
+        for(int i=0; i < zigzagCoefMatrix_.size(); i++)
+        {
+            for(j=0; j < zigzagCoefMatrix_[i].size(); j++)
+            {
+                HuffmanVector_.push_back( zigzagCoefMatrix_[i][j] );
+            }
+        }
+
+        return HuffmanVector_;
+    }
+
+    std::vector<int> HuffmanVector_;
+    std::vector< std::vector<int> > intMatrix_;
+    std::vector< std::vector<int> > compIntMatrix_;
+    std::vector< std::vector<double> > coefMatrix_;
+    std::vector< std::vector<int> > zigzagCoefMatrix_;
 
     std::vector< std::vector<int> > qMatrix = { {16, 11, 10, 16, 24, 40, 51, 61}, {12, 12, 14, 19, 26, 58, 60, 55},
     {14, 13, 16, 24, 40, 57, 69, 56}, {14, 17, 22, 29, 51, 87, 80, 62}, {18, 22, 37, 56, 68, 109, 103, 77},
     {24, 35, 55, 64, 81, 104, 113, 92}, {49, 64, 78, 87, 103, 121, 120, 101}, {72, 92, 95, 98, 112, 100, 103, 99} };
-    std::vector< std::vector<int> > intMatrix_;
-    std::vector< std::vector<int> > compIntMatrix_;
-    std::vector< std::vector<double> > coefMatrix_;
 
 private:
 
@@ -426,9 +497,8 @@ private:
 
     }
 
+    std::string fileName_;
+    const unsigned blockSize_ = 8;
     double pi = 3.14159265358979324;
     unsigned fileRows_, fileColumns_, maxIntensity_;
-    const unsigned blockSize_ = 8;
-    std::string fileName_;
-
 };

@@ -46,32 +46,31 @@ class HuffmanCoding
 
 public:
 
+
     std::vector< std::vector<bool> > encode(std::vector<int> coefVec)
     {
         std::string HuffmanString;
         std::vector<bool> bitsVec;
         std::vector< std::vector<bool> > HuffmanBitsVec;
 
-        getHuffmanCodes(coefVec, &HuffmanVec_);
+        buildHuffmanTable(coefVec);
 
-        for(int i=0; i<HuffmanVec_.size(); i++)
+        for(int i=0; i < coefVec.size(); i++)
         {
-            HuffmanString = HuffmanVec_[i];
-
-            bitsVec = getBitsVec( HuffmanString );
+            HuffmanString = getHuffmanCode( coefVec[i] );
+            bitsVec = getBitsVec(HuffmanString);
             HuffmanBitsVec.push_back(bitsVec);
         }
 
         return HuffmanBitsVec;
     }
 
-    std::vector<int> decode( std::vector< std::vector<bool> > HuffmanBitsVec)
+    std::vector<int> decode(std::vector< std::vector<bool> > HuffmanBitsVec)
     {
         std::vector<int> coefVec;
 
         for(int i=0; i<HuffmanBitsVec.size(); i++)
         {
-            std::cout << "Coefficient: " << decode(HuffmanBitsVec[i]) << std::endl;
             coefVec.push_back( decode(HuffmanBitsVec[i]) );
         }
 
@@ -83,7 +82,8 @@ private:
     // Same implementations as heap sort until Huffman tree part.
     struct node
     {
-        char coef_;
+        // tried to use char to represent coef_ but we have many coefficients greater than 255.
+        int coef_;
         unsigned freq_;
 
         struct node* left;
@@ -98,7 +98,7 @@ private:
         struct node** nodeArray;
     };
 
-    node* newNode(char coef, unsigned freq)
+    node* newNode(int coef, unsigned freq)
     {
         node* newNode;
         newNode = new node;
@@ -185,12 +185,12 @@ private:
 
     struct minHeap* vecToHeap(std::vector<int> coefVec)
     {
-        char coef;
-        std::map<char, unsigned> freqTable;
+        int coef;
+        std::map<int, unsigned> freqTable;
 
         for(int i=0; i<coefVec.size(); i++)
         {
-            coef = static_cast<char>( coefVec[i] );
+            coef = coefVec[i];
             if( freqTable.find(coef) != freqTable.end() ){ freqTable[coef] += 1; }
             else{ freqTable[coef] = 1; }
         }
@@ -198,7 +198,7 @@ private:
         int i = 0;
         struct minHeap* minHeap = newMinHeap( coefVec.size() );
 
-        for(std::map<char, unsigned>::iterator iter = freqTable.begin(); iter != freqTable.end(); iter++)
+        for(std::map<int, unsigned>::iterator iter = freqTable.begin(); iter != freqTable.end(); iter++)
         {
             minHeap->nodeArray[i] = newNode( iter->first, iter->second );
             i += 1;
@@ -230,8 +230,8 @@ private:
             leftChildNode = extraMinNode(minHeap);
             rightChildNode = extraMinNode(minHeap);
             unsigned sum_freq = leftChildNode->freq_ + rightChildNode->freq_;
-            // nodes with mixed chars don't matter so just use one unique char.
-            parentNode = newNode('^', sum_freq);
+            // we assign these internal nodes with 2222 since it's an upper bound for the coefficients.
+            parentNode = newNode(2222, sum_freq);
             parentNode->left = leftChildNode;
             parentNode->right = rightChildNode;
 
@@ -241,37 +241,36 @@ private:
         return extraMinNode(minHeap);
     }
 
-    void dfs(struct node* root, std::vector<std::string>* vec, std::string str, int i)
+    void dfs(struct node* root, std::string str, int i)
     {
 
       if(root->left)
       {
         str[i] = '0';
-        dfs(root->left, vec, str, i+1);
+        dfs(root->left, str, i+1);
       }
 
       if(root->right)
       {
         str[i] = '1';
-        dfs(root->right, vec, str, i+1);
+        dfs(root->right, str, i+1);
       }
-
-      if(root->coef_ != '^')
+      // 2222 was our asigned special key.
+      if(root->coef_ != 2222)
       {
-        std::cout << "Coefficient: " << (int)root->coef_ << "  Frequency: " << root->freq_ << "  Huffman Code: " << str << std::endl;
-        (*vec).push_back(str);
+        std::cout << "Coefficient: " << root->coef_ << "  Frequency: " << root->freq_ << "  Huffman Code: " << str << std::endl;
+        HuffmanTable_[root->coef_] = str;
       }
 
     }
 
-    void getHuffmanCodes(std::vector<int> coefVec, std::vector<std::string>* HuffmanVector)
+    void buildHuffmanTable(std::vector<int> coefVec)
     {
-        size_t size = coefVec.size();
-        std::string HuffmanString(size, ' ');
+        std::string HuffmanString(20, ' ');
 
         HuffmanRoot_ = buildHuffmanTree(coefVec);
 
-        dfs(HuffmanRoot_, HuffmanVector, HuffmanString, 0);
+        dfs(HuffmanRoot_, HuffmanString, 0);
     }
 
     std::vector<bool> getBitsVec(std::string HuffmanString)
@@ -290,6 +289,11 @@ private:
         return bitsVec;
     }
 
+    std::string getHuffmanCode(int coef)
+    {
+        return HuffmanTable_[coef];
+    }
+
     // decode method should take in a bits vector and find the coefficient based on
     // the Huffman tree.
     int decode(std::vector<bool> bitsVec)
@@ -301,12 +305,12 @@ private:
         {
             if(bitsVec[i] == false){ node = node -> left; }
             else{ node = node -> right; }
-
         }
 
         return node->coef_;
     }
 
-    std::vector<std::string> HuffmanVec_;
     struct node* HuffmanRoot_;
+
+    std::map<int, std::string> HuffmanTable_;
 };
