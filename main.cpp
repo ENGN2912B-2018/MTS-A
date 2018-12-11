@@ -73,59 +73,20 @@ int main()
   // thread1.join();
   // thread2.join();
 
-  // Image testImage("../images/pepper.ascii.pgm", false);
-
-  // testImage.sequentialCompression("../images/pepper/", true);
-
-  // statisticalAnalysis stats;
-
-  HuffmanCoding Huffman;
-
-  std::vector<int> coefVec;
   std::vector< std::vector<bool> > HuffmanVec;
 
   Image testImage1("../images/dog.binary.pgm", true);
   // Compress performs both dct and quantization.
-  testImage1.compress(50);
+  testImage1.compress(90);
   // Zigzag scan creates a vector of coefficients scanned in zigzag fashion block by block(integer 2220 signals end of block).
-  coefVec = testImage1.zigzagScan();
-  // Build the Huffman tree from all coefficients and generate a vector that contains
-  // the Huffman coded coefficients for the whole image.
-  HuffmanVec = Huffman.encode(coefVec);
+  HuffmanVec = testImage1.HuffmanEncode();
 
   /*
     put the codes for sending the bool vectors over the network here.
   */
 
-  std::vector<int> coefVec2 = Huffman.decode(HuffmanVec);
-  std::vector< std::vector<int> > coefMatrix2 = testImage1.padding(coefVec2);
-  // for(int i=0; i<20; i++){ std::cout << coefMatrix2[0][i] << " "; }
+  testImage1.HuffmanDecode(HuffmanVec);
+  testImage1.decompress();
+  testImage1.saveImage("../images/dog/dog90.binary.pgm", true);;
 
-  std::vector< std::vector<int> > coefMatrix3 = testImage1.recoverCoefMatrix(coefMatrix2);
-
-  for(int i=0; i<30; i++){ std::cout << coefVec[i] << " "; }
-  std::cout << "\n\n";
-
-  for(int i=0; i<8; i++)
-  {
-    for(int j=0; j<8; j++)
-    {
-      std::cout << testImage1.coefMatrix_[i][j] << " ";
-    }
-    std::cout << "\n";
-  }
-
-  // for(int i=0; i<40; i++){ std::cout << testImage1.coefMatrix_[0][i] << " "; }
-  // std::cout << "\n\n";
-  // for(int i=0; i<40; i++){ std::cout << coefMatrix3[0][i] << " "; }
-  // std::cout << "\n\n";
-  // testImage1.decompress();
-
-  // testImage1.saveImage("../images/dog/dog70.binary.pgm", true);
-
-  // int mse = stats.MSE(testImage1.intMatrix_, testImage1.compIntMatrix_);
-  // std::cout << "\nmse: " << mse << std::endl;
-
-  // double psnr = stats.PSNR(255, mse);
-  // std::cout << "psnr: " << psnr << std::endl;
 }

@@ -10,13 +10,80 @@
 #include <vector>
 #include <array>
 #include "algorithm/algorithms.h"
+#define pi 3.14159265358979324
 
 class Image
 {
 
 public:
 
-    Image(std::string fileName, bool binaryFlag)
+    Image();
+
+    Image(std::string fileName, bool binaryFlag){ readFile(fileName, binaryFlag); }
+
+    void readImage(std::string fileName, bool binaryFlag){ readFile(fileName, binaryFlag); }
+
+    void saveImage(std::string fileName, bool binaryFlag){ saveFile(fileName, binaryFlag); }
+
+    void sequentialCompression(std::string destinationFolder, bool binaryFlag){ seqComp(destinationFolder, binaryFlag); }
+
+    void compress(unsigned int qRatio)
+    {
+        std::cout << "Compressing file with quality ratio of " << qRatio << "...\n" << std::endl;
+        dct();
+        quantization(qRatio);
+        std::cout << "File compression completed.\n" << std::endl;
+    }
+
+    void decompress(){ idct(); }
+
+    void decompress(std::vector< std::vector<double> > coefMatrix){ idct(coefMatrix); }
+
+    std::vector<std::vector<bool>> HuffmanEncode()
+    {
+        std::vector<std::vector<bool>> HuffmanVec;
+
+        zigzagScan();
+        HuffmanVec = Huffman_.encode(coefVector_);
+
+        return HuffmanVec;
+    }
+
+    void HuffmanDecode(std::vector<std::vector<bool>> HuffmanVec)
+    {
+        std::vector<int> decodedVec;
+
+        decodedVec = Huffman_.decode(HuffmanVec);
+        unzigzag(decodedVec);
+    }
+
+private:
+
+    void setMatrices(int row, int column)
+    {
+        int i, j;
+
+        intMatrix_.resize(row);
+        for(i=0; i<row; i++)
+        {
+            intMatrix_[i].resize(column);
+        }
+
+        compIntMatrix_.resize(row);
+        for(i=0; i<row; i++)
+        {
+            compIntMatrix_[i].resize(column);
+        }
+
+        coefMatrix_.resize(row);
+        for(i=0; i<row; i++)
+        {
+            coefMatrix_[i].resize(column);
+        }
+
+    }
+
+    void readFile(std::string fileName, bool binaryFlag)
     {
         if(binaryFlag == true)
         {
@@ -81,6 +148,7 @@ public:
             }
             else{ std::cerr << "Could not open file." << std::endl; }
         }
+        // if not binary, read as an ASCII file.
         else
         {
             std::ifstream inputFile(fileName, std::ios::in);
@@ -116,10 +184,9 @@ public:
                 inputFile.close();
             }
         }
-
     }
 
-    void saveImage(std::string fileName, bool binaryFlag)
+    void saveFile(std::string fileName, bool binaryFlag)
     {
         int i, j;
 
@@ -146,117 +213,48 @@ public:
 
     }
 
-    void sequentialCompression(std::string compressedFileFolder, bool binaryFlag)
-    {
-        statisticalAnalysis stats;
-
-        std::string compressedFileName;
-        std::vector< std::vector<int> > originalInt, compressedInt;
-
-        for(int i=0; i<100; i+=10)
-        {
-            compress(i);
-            decompress();
-
-            if(binaryFlag == true){ compressedFileName = compressedFileFolder + std::to_string(i) + ".binary.pgm"; }
-            else{ compressedFileName = compressedFileFolder + std::to_string(i) + ".ascii.pgm"; }
-
-            double mse = stats.MSE(intMatrix_, compIntMatrix_);
-            std::cout << "\nqRatio: "  << i << "   MSE: " << mse << std::endl;
-
-            double psnr = stats.PSNR(maxIntensity_, mse);
-            std::cout << "\nqRatio: "  << i << "   PSNR: " << psnr << std::endl;
-
-            saveImage(compressedFileName, true);
-        }
-
-    }
-
-    void setMatrices(int row, int column)
+    void dct()
     {
         int i, j;
-
-        intMatrix_.resize(row);
-        for(i=0; i<row; i++)
+        for(i=0; i < fileRows_/8; i++)
         {
-            intMatrix_[i].resize(column);
-        }
-
-        compIntMatrix_.resize(row);
-        for(i=0; i<row; i++)
-        {
-            compIntMatrix_[i].resize(column);
-        }
-
-        coefMatrix_.resize(row);
-        for(i=0; i<row; i++)
-        {
-            coefMatrix_[i].resize(column);
+            for(j=0; j < fileColumns_/8; j++)
+            {
+                dct(8*i, 8*j);
+            }
         }
 
     }
 
-    std::vector< std::vector<int> > padding(std::vector<int> coefVec)
+    void dct(unsigned start_row, unsigned start_column)
     {
-      std::vector<int> coefVector;
-      std::vector< std::vector<int> > coefMatrix;
+        int i, j, m, n;
+        double c_i, c_j, sum;
 
-      for(int i=0; i<coefVec.size(); i++)
-      {
-        if(coefVec[i] == 2220)
+        for(i=start_row; i < start_row + blockSize_; i++)
         {
-          // resize a vector initializes the empty elements to 0 anyway.
-          coefVector.resize(64);
-          coefMatrix.push_back(coefVector);
-          coefVector.clear();
-        }
-        else{ coefVector.push_back(coefVec[i]); }
+            for(j=start_column; j < start_column + blockSize_; j++)
+            {
+                sum = 0.0;
 
-      }
+                if(i%8 == 0){ c_i = std::sqrt(1.0/blockSize_); }
+                else{ c_i = std::sqrt(2.0/blockSize_); }
 
-      return coefMatrix;
-    }
+                if(j%8 == 0){ c_j = std::sqrt(1.0/blockSize_); }
+                else{ c_j = std::sqrt(2.0/blockSize_); }
 
+                for(m=start_row; m < start_row + blockSize_; m++)
+                {
+                    for(n=start_column; n < start_column + blockSize_; n++)
+                    {
+                        sum += intMatrix_[m][n] * std::cos( (2.0 * (m%8) + 1) * (i%8) * pi / (2.0 * blockSize_) ) * std::cos( (2.0 * (n%8) + 1) * (j%8) * pi / (2.0 * blockSize_) );
+                    }
+                }
 
-    std::vector< std::vector<int> > recoverCoefMatrix(std::vector< std::vector<int> > inputCoefMatrix)
-    {
-      int i, j, k, l;
-      int hBlockCount, startingRow, startingColumn;
-      std::vector< std::vector<int> > outputCoefMatrix;
-
-      int m = 0;
-      hBlockCount = fileColumns_/8;
-
-      outputCoefMatrix.resize(fileRows_);
-      for(i=0; i< outputCoefMatrix.size(); i++){ outputCoefMatrix[i].resize(fileColumns_); }
-
-      for(k = 0; k < inputCoefMatrix.size(); k++)
-      {
-        startingRow = k / hBlockCount;
-        startingColumn = (k % hBlockCount) * 8;
-
-        i = startingRow;
-        l = startingRow;
-        m = 0;
-
-        while(l < startingRow + blockSize_)
-        {
-          while(i <= l)
-          {
-            j = l - i + startingColumn;
-            outputCoefMatrix[i][j] = inputCoefMatrix[k][m];
-
-            m += 1;
-            i += 1;
-          }
-
-          l += 1;
-          i = startingRow;
+            coefMatrix_[i][j] = c_i * c_j * sum;
+            }
         }
 
-      }
-
-      return outputCoefMatrix;
     }
 
     void quantization(unsigned int qRatio = 0)
@@ -329,23 +327,7 @@ public:
 
     }
 
-    void compress(unsigned int qRatio)
-    {
-        dct();
-        quantization(qRatio);
-    }
-
-    void decompress()
-    {
-        idct();
-    }
-
-    void decompress(std::vector< std::vector<double> > coefMatrix)
-    {
-        idct(coefMatrix);
-    }
-
-    // it's not the zigzag scan people refer to but I think this is a sufficient short cut.
+    // not the normal zigzag scan but I think it is efficient.
     std::vector<int> zigzagScan(unsigned startingRow, unsigned startingColumn)
     {
         int j, coefficient;
@@ -393,9 +375,10 @@ public:
         return zigzagCoefVec;
     }
 
-    std::vector<int> zigzagScan()
+    void zigzagScan()
     {
         int i, j, k;
+
         std::vector<int> zigzagCoefVec;
 
         for(i=0; i < fileRows_/8; i++)
@@ -404,65 +387,61 @@ public:
             {
                 zigzagCoefVec = zigzagScan(8*i, 8*j);
 
-                for(k=0; k < zigzagCoefVec.size(); k++){ HuffmanVector_.push_back( zigzagCoefVec[k] ); }
-            }
-        }
-
-        return HuffmanVector_;
-    }
-
-    std::vector<int> HuffmanVector_;
-    std::vector< std::vector<int> > intMatrix_;
-    std::vector< std::vector<int> > compIntMatrix_;
-    std::vector< std::vector<double> > coefMatrix_;
-    std::vector< std::vector<int> > zigzagCoefMatrix_;
-
-    std::vector< std::vector<int> > qMatrix = { {16, 11, 10, 16, 24, 40, 51, 61}, {12, 12, 14, 19, 26, 58, 60, 55},
-    {14, 13, 16, 24, 40, 57, 69, 56}, {14, 17, 22, 29, 51, 87, 80, 62}, {18, 22, 37, 56, 68, 109, 103, 77},
-    {24, 35, 55, 64, 81, 104, 113, 92}, {49, 64, 78, 87, 103, 121, 120, 101}, {72, 92, 95, 98, 112, 100, 103, 99} };
-
-private:
-
-    void dct()
-    {
-        int i, j;
-        for(i=0; i < fileRows_/8; i++)
-        {
-            for(j=0; j < fileColumns_/8; j++)
-            {
-                dct(8*i, 8*j);
+                for(k=0; k < zigzagCoefVec.size(); k++){ coefVector_.push_back( zigzagCoefVec[k] ); }
             }
         }
 
     }
 
-    void dct(unsigned start_row, unsigned start_column)
+    void unzigzag(std::vector<int> decodedVec)
     {
-        int i, j, m, n;
-        double c_i, c_j, sum;
+        // Perform 0 padding to all the blocks.
+        int i, j, k, l, m;
+        int hBlockCount, startingRow, startingColumn;
 
-        for(i=start_row; i < start_row + blockSize_; i++)
+        std::vector<int> coefVec;
+        std::vector< std::vector<int> > inputCoefMatrix;
+
+        for(int i=0; i < decodedVec.size(); i++)
         {
-            for(j=start_column; j < start_column + blockSize_; j++)
+            if(decodedVec[i] == 2220)
             {
-                sum = 0.0;
+                // resize a vector initializes the empty elements to 0 anyway.
+                coefVec.resize(64);
+                inputCoefMatrix.push_back(coefVec);
+                coefVec.clear();
+            }
+            else{ coefVec.push_back(decodedVec[i]); }
 
-                if(i%8 == 0){ c_i = std::sqrt(1.0/blockSize_); }
-                else{ c_i = std::sqrt(2.0/blockSize_); }
+        }
 
-                if(j%8 == 0){ c_j = std::sqrt(1.0/blockSize_); }
-                else{ c_j = std::sqrt(2.0/blockSize_); }
+        // Unpack the coefficients in zigzag fashion as before.
+        hBlockCount = fileColumns_/8;
 
-                for(m=start_row; m < start_row + blockSize_; m++)
+        for(k = 0; k < inputCoefMatrix.size(); k++)
+        {
+            startingRow = (k / hBlockCount) * 8;
+            startingColumn = (k % hBlockCount) * 8;
+
+            i = startingRow;
+            l = startingRow;
+            m = 0;
+
+            while(l < startingRow + blockSize_)
+            {
+                while(i <= l)
                 {
-                    for(n=start_column; n < start_column + blockSize_; n++)
-                    {
-                        sum += intMatrix_[m][n] * std::cos( (2.0 * (m%8) + 1) * (i%8) * pi / (2.0 * blockSize_) ) * std::cos( (2.0 * (n%8) + 1) * (j%8) * pi / (2.0 * blockSize_) );
-                    }
+                    j = l - i + startingColumn;
+                    coefMatrix_[i][j] = inputCoefMatrix[k][m];
+
+                    m += 1;
+                    i += 1;
                 }
 
-            coefMatrix_[i][j] = c_i * c_j * sum;
+                l += 1;
+                i = startingRow;
             }
+
         }
 
     }
@@ -553,8 +532,62 @@ private:
 
     }
 
+    void seqComp(std::string compressedFileFolder, bool binaryFlag)
+    {
+        std::string compressedFileName;
+        std::vector< std::vector<int> > originalInt, compressedInt;
+
+        for(int i=0; i<100; i+=10)
+        {
+            compress(i);
+            decompress();
+
+            if(binaryFlag == true)
+            {
+                compressedFileName = compressedFileFolder + std::to_string(i) + ".binary.pgm";
+
+                double mse = stats_.MSE(intMatrix_, compIntMatrix_);
+                std::cout << "\nqRatio: "  << i << "   MSE: " << mse << std::endl;
+
+                double psnr = stats_.PSNR(maxIntensity_, mse);
+                std::cout << "\nqRatio: "  << i << "   PSNR: " << psnr << std::endl;
+
+                saveImage(compressedFileName, true);
+            }
+            else
+            {
+                compressedFileName = compressedFileFolder + std::to_string(i) + ".ascii.pgm";
+
+                double mse = stats_.MSE(intMatrix_, compIntMatrix_);
+                std::cout << "\nqRatio: "  << i << "   MSE: " << mse << std::endl;
+
+                double psnr = stats_.PSNR(maxIntensity_, mse);
+                std::cout << "\nqRatio: "  << i << "   PSNR: " << psnr << std::endl;
+
+                saveImage(compressedFileName, false);
+            }
+
+        }
+
+    }
+
+
+    // file information.
     std::string fileName_;
-    const unsigned blockSize_ = 8;
-    double pi = 3.14159265358979324;
     unsigned fileRows_, fileColumns_, maxIntensity_;
+    // size of minimum compression unit in terms of number of pixels.
+    const unsigned blockSize_ = 8;
+    // External classes used.
+    HuffmanCoding Huffman_;
+    statisticalAnalysis stats_;
+    // Zigzag scanned vector of coefficients to be Huffman encoded.
+    std::vector<int> coefVector_;
+    // matrix of pixel intensities, compressed intensities and coefficients.
+    std::vector< std::vector<int> > intMatrix_;
+    std::vector< std::vector<int> > compIntMatrix_;
+    std::vector< std::vector<double> > coefMatrix_;
+    // JEPG standard quantization matrix.
+    std::vector< std::vector<int> > qMatrix = { {16, 11, 10, 16, 24, 40, 51, 61}, {12, 12, 14, 19, 26, 58, 60, 55},
+    {14, 13, 16, 24, 40, 57, 69, 56}, {14, 17, 22, 29, 51, 87, 80, 62}, {18, 22, 37, 56, 68, 109, 103, 77},
+    {24, 35, 55, 64, 81, 104, 113, 92}, {49, 64, 78, 87, 103, 121, 120, 101}, {72, 92, 95, 98, 112, 100, 103, 99} };
 };
