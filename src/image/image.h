@@ -196,6 +196,69 @@ public:
 
     }
 
+    std::vector< std::vector<int> > padding(std::vector<int> coefVec)
+    {
+      std::vector<int> coefVector;
+      std::vector< std::vector<int> > coefMatrix;
+
+      for(int i=0; i<coefVec.size(); i++)
+      {
+        if(coefVec[i] == 2220)
+        {
+          // resize a vector initializes the empty elements to 0 anyway.
+          coefVector.resize(64);
+          coefMatrix.push_back(coefVector);
+          coefVector.clear();
+        }
+        else{ coefVector.push_back(coefVec[i]); }
+
+      }
+
+      return coefMatrix;
+    }
+
+
+    std::vector< std::vector<int> > recoverCoefMatrix(std::vector< std::vector<int> > inputCoefMatrix)
+    {
+      int i, j, k, l;
+      int hBlockCount, startingRow, startingColumn;
+      std::vector< std::vector<int> > outputCoefMatrix;
+
+      int m = 0;
+      hBlockCount = fileColumns_/8;
+
+      outputCoefMatrix.resize(fileRows_);
+      for(i=0; i< outputCoefMatrix.size(); i++){ outputCoefMatrix[i].resize(fileColumns_); }
+
+      for(k = 0; k < inputCoefMatrix.size(); k++)
+      {
+        startingRow = k / hBlockCount;
+        startingColumn = (k % hBlockCount) * 8;
+
+        i = startingRow;
+        l = startingRow;
+        m = 0;
+
+        while(l < startingRow + blockSize_)
+        {
+          while(i <= l)
+          {
+            j = l - i + startingColumn;
+            outputCoefMatrix[i][j] = inputCoefMatrix[k][m];
+
+            m += 1;
+            i += 1;
+          }
+
+          l += 1;
+          i = startingRow;
+        }
+
+      }
+
+      return outputCoefMatrix;
+    }
+
     void quantization(unsigned int qRatio = 0)
     {
         int i, j;
@@ -311,6 +374,7 @@ public:
                     {
                         zigzagCoefVec.push_back(0);
                         zeroCount += 1;
+                        i += 1;
                     }
 
                 }
@@ -324,7 +388,6 @@ public:
 
             k += 1;
             i = startingRow;
-            zeroCount = 0;
         }
 
         return zigzagCoefVec;
@@ -332,7 +395,7 @@ public:
 
     std::vector<int> zigzagScan()
     {
-        int i, j;
+        int i, j, k;
         std::vector<int> zigzagCoefVec;
 
         for(i=0; i < fileRows_/8; i++)
@@ -340,15 +403,8 @@ public:
             for(j=0; j < fileColumns_/8; j++)
             {
                 zigzagCoefVec = zigzagScan(8*i, 8*j);
-                zigzagCoefMatrix_.push_back( zigzagCoefVec );
-            }
-        }
 
-        for(int i=0; i < zigzagCoefMatrix_.size(); i++)
-        {
-            for(j=0; j < zigzagCoefMatrix_[i].size(); j++)
-            {
-                HuffmanVector_.push_back( zigzagCoefMatrix_[i][j] );
+                for(k=0; k < zigzagCoefVec.size(); k++){ HuffmanVector_.push_back( zigzagCoefVec[k] ); }
             }
         }
 

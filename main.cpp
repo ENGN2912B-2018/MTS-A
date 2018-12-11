@@ -64,60 +64,6 @@ void runServer() {
 }
 
 
-std::vector< std::vector<int> > padding(std::vector<int> coefVec)
-{
-  std::vector<int> coefVector;
-  std::vector< std::vector<int> > coefMatrix;
-
-  for(int i=0; i<coefVec.size(); i++)
-  {
-    if(coefVec[i] == 2220)
-    {
-      // resize a vector initializes the empty elements to 0 anyway.
-      coefVector.resize(64);
-      coefMatrix.push_back(coefVector);
-      coefVector.clear();
-    }
-    else{ coefVector.push_back(coefVec[i]); }
-
-  }
-
-  return coefMatrix;
-};
-
-
-std::vector< std::vector<int> > recoverCoefMatrix()
-{
-  int i, j;
-  int hBlockCount, startingRow, startingColumn;
-  std::vector< std::vector<int> > coefMatrix;
-
-  hBlockCount = fileColumns_/8;
-
-  coefMatrix.resize(fileRows_);
-  for(i=0; i< coefMatrix.size(); i++){ coefMatrix[i].resize(fileColumns_); }
-
-  for(int i=0; i<coefMatrix2.size(); i+=)
-  {
-
-    startingRow = i / hBlockCount;
-    start_column = (i % hBlockCount) * 8;
-
-    for(i = startingRow; i < startingRow + blockSize_; i++)
-    {
-      for(j = startingColumn; j < startingColumn + blockSize_; j++)
-      {
-        coefMatrix[i][j] = ;
-      }
-    }
-
-  }
-
-  return coefMatrix;
-}
-
-
-
 int main()
 {
 
@@ -152,9 +98,27 @@ int main()
   */
 
   std::vector<int> coefVec2 = Huffman.decode(HuffmanVec);
-  std::vector< std::vector<int> > coefMatrix2 = padding(coefVec2);
-
+  std::vector< std::vector<int> > coefMatrix2 = testImage1.padding(coefVec2);
   // for(int i=0; i<20; i++){ std::cout << coefMatrix2[0][i] << " "; }
+
+  std::vector< std::vector<int> > coefMatrix3 = testImage1.recoverCoefMatrix(coefMatrix2);
+
+  for(int i=0; i<30; i++){ std::cout << coefVec[i] << " "; }
+  std::cout << "\n\n";
+
+  for(int i=0; i<8; i++)
+  {
+    for(int j=0; j<8; j++)
+    {
+      std::cout << testImage1.coefMatrix_[i][j] << " ";
+    }
+    std::cout << "\n";
+  }
+
+  // for(int i=0; i<40; i++){ std::cout << testImage1.coefMatrix_[0][i] << " "; }
+  // std::cout << "\n\n";
+  // for(int i=0; i<40; i++){ std::cout << coefMatrix3[0][i] << " "; }
+  // std::cout << "\n\n";
   // testImage1.decompress();
 
   // testImage1.saveImage("../images/dog/dog70.binary.pgm", true);
