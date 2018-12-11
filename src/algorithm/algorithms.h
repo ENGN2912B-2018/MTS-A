@@ -6,9 +6,26 @@
 
 class statisticalAnalysis
 {
+
 public:
 
     double MSE(std::vector< std::vector<int> > intMatrix1, std::vector< std::vector<int> > intMatrix2)
+    {
+        mse_ = meanSquaredError(intMatrix1, intMatrix2);
+
+        return mse_;
+    }
+
+    double PSNR(int maxInt)
+    {
+        psnr_ = peakSignalNoiseRatio(maxInt, mse_);
+
+        return psnr_;
+    }
+
+private:
+
+    double meanSquaredError(std::vector< std::vector<int> > intMatrix1, std::vector< std::vector<int> > intMatrix2)
     {
         int i, j;
 
@@ -29,15 +46,15 @@ public:
         return mse;
     }
 
-    double PSNR(int maxInt, double mse)
+    double peakSignalNoiseRatio(int maxInt, double mse)
     {
         double psnr = 10 * log10( maxInt * maxInt / mse);
 
         return psnr;
     }
 
-private:
-
+    double mse_;
+    double psnr_;
 };
 
 

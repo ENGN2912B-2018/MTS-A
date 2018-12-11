@@ -6,9 +6,7 @@
 #include <iostream>
 #include <string>
 #include <bitset>
-#include <algorithm>
 #include <vector>
-#include <array>
 #include "algorithm/algorithms.h"
 #define pi 3.14159265358979324
 
@@ -32,10 +30,15 @@ public:
         std::cout << "Compressing file with quality ratio of " << qRatio << "...\n" << std::endl;
         dct();
         quantization(qRatio);
-        std::cout << "File compression completed.\n" << std::endl;
+        std::cout << "Image compression completed.\n" << std::endl;
     }
 
-    void decompress(){ idct(); }
+    void decompress()
+    {
+        std::cout << "\nDecompressing file..." << std::endl;
+        idct();
+        std::cout << "Image decompression completed."
+    }
 
     void decompress(std::vector< std::vector<double> > coefMatrix){ idct(coefMatrix); }
 
@@ -555,7 +558,7 @@ private:
                 double mse = stats_.MSE(intMatrix_, compIntMatrix_);
                 std::cout << "\nqRatio: "  << i << "   MSE: " << mse << std::endl;
 
-                double psnr = stats_.PSNR(maxIntensity_, mse);
+                double psnr = stats_.PSNR(maxIntensity_);
                 std::cout << "\nqRatio: "  << i << "   PSNR: " << psnr << std::endl;
 
                 saveImage(compressedFileName, true);
@@ -567,7 +570,7 @@ private:
                 double mse = stats_.MSE(intMatrix_, compIntMatrix_);
                 std::cout << "\nqRatio: "  << i << "   MSE: " << mse << std::endl;
 
-                double psnr = stats_.PSNR(maxIntensity_, mse);
+                double psnr = stats_.PSNR(maxIntensity_);
                 std::cout << "\nqRatio: "  << i << "   PSNR: " << psnr << std::endl;
 
                 saveImage(compressedFileName, false);
