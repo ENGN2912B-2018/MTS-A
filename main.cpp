@@ -73,20 +73,23 @@ int main()
   // thread1.join();
   // thread2.join();
 
+  // binary vector for Huffman encoded coefficients to send over to the server.
   std::vector< std::vector<bool> > HuffmanVec;
-
+  // read a pgm file in given directory, second argument is binary flag(true for bianry pgm and false otherwise).
   Image testImage1("../images/dog.binary.pgm", true);
-  // Compress performs both dct and quantization.
+  // compress performs both dct and quantization.
   testImage1.compress(90);
-  // Zigzag scan creates a vector of coefficients scanned in zigzag fashion block by block(integer 2220 signals end of block).
+  // zigzag scan to get the cofficients block by block, then Huffman encode all coefficeints in the image.
   HuffmanVec = testImage1.HuffmanEncode();
 
   /*
     put the codes for sending the bool vectors over the network here.
   */
 
+  // decoded the binary vectors back to coefficients and unpack them into the coefficient image in zigzag fashion.
   testImage1.HuffmanDecode(HuffmanVec);
+  // performs inverse dct.
   testImage1.decompress();
+  // save the decompressed image in given directory as binary or ascii file(true for binary).
   testImage1.saveImage("../images/dog/dog90.binary.pgm", true);;
-
 }

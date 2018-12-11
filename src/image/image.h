@@ -327,7 +327,7 @@ private:
 
     }
 
-    // not the normal zigzag scan but I think it is efficient.
+    // performs zigzag scan on a single block of quantized coefficients and return the vector.
     std::vector<int> zigzagScan(unsigned startingRow, unsigned startingColumn)
     {
         int j, coefficient;
@@ -375,6 +375,8 @@ private:
         return zigzagCoefVec;
     }
 
+    // perform zigzag scan for all quantized coefficients blocks and save the result to
+    // coefVector_ before performing Huffman encoding.
     void zigzagScan()
     {
         int i, j, k;
@@ -458,6 +460,7 @@ private:
         }
     }
 
+    // performs inverse discrete cosine transform on a single block defined by the starting row and starting column.
     void idct(unsigned start_row, unsigned start_column)
     {
         int i, j, m, n;
@@ -489,6 +492,7 @@ private:
 
     }
 
+    // performs idct on a input coefMatrix.
     void idct(std::vector< std::vector<double> > coefMatrix)
     {
         int i, j;
@@ -532,6 +536,8 @@ private:
 
     }
 
+    // compress the image sequentially by incrementing quality ratio 10 at a time and save all the images in a destination folder.
+    // error analysis is also performed.
     void seqComp(std::string compressedFileFolder, bool binaryFlag)
     {
         std::string compressedFileName;
