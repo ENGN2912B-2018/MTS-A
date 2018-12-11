@@ -18,7 +18,7 @@ public:
 
     Image(std::string fileName, bool binaryFlag)
     {
-        if(binaryFlag==true)
+        if(binaryFlag == true)
         {
             std::ifstream inputFile(fileName, std::ios::in | std::ios::binary | std::ios::ate);
             std::streampos fileSize;
@@ -32,7 +32,7 @@ public:
             {
                 fileName_ = fileName;
                 fileSize = inputFile.tellg();
-                std::cout << "\nFile Size(bits): " << fileSize << std::endl;
+                std::cout << "\nFile Size(bytes): " << fileSize << std::endl;
                 memBlock = new char [fileSize];
                 inputFile.seekg(0, std::ios::beg);
                 inputFile.read(memBlock, fileSize);
@@ -282,26 +282,26 @@ public:
         idct(coefMatrix);
     }
 
-    // it's not exactly the zigzag scan people use but I think this is a sufficient short cut.
-    std::vector<int> zigzagScan(unsigned start_row, unsigned start_column)
+    // it's not the zigzag scan people refer to but I think this is a sufficient short cut.
+    std::vector<int> zigzagScan(unsigned startingRow, unsigned startingColumn)
     {
         int j, coefficient;
         int zeroCount = 0;
-        int i = start_row, k = start_row;
+        int i = startingRow, k = startingRow;
 
         std::vector<int> zigzagCoefVec;
 
-        while(k < start_row + blockSize_)
+        while(k < startingRow + blockSize_)
         {
             while(i <= k)
             {
-                j = k - i + start_column;
+                j = k - i + startingColumn;
                 coefficient = coefMatrix_[i][j];
 
                 if(coefficient == 0)
                 {
-                    // stop scanning as soon as we get five zero coefficients and do 0 padding.
-                    // push 1021 to the end to represent end of block since the theoretical max is 1020.
+                    // stop scanning as soon as we get five zero coefficients. Use 2220 to
+                    // represent end of block since the theoretical max cofficient is 2040.
                     if(zeroCount >= 5)
                     {
                         zigzagCoefVec.push_back(2220);
@@ -323,7 +323,7 @@ public:
             }
 
             k += 1;
-            i = start_row;
+            i = startingRow;
             zeroCount = 0;
         }
 

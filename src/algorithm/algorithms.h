@@ -46,7 +46,6 @@ class HuffmanCoding
 
 public:
 
-
     std::vector< std::vector<bool> > encode(std::vector<int> coefVec)
     {
         std::string HuffmanString;
@@ -243,24 +242,24 @@ private:
 
     void dfs(struct node* root, std::string str, int i)
     {
+        // use dfs to assign codes and save the coding table.
+        if(root->left)
+        {
+            str[i] = '0';
+            dfs(root->left, str, i+1);
+        }
 
-      if(root->left)
-      {
-        str[i] = '0';
-        dfs(root->left, str, i+1);
-      }
-
-      if(root->right)
-      {
-        str[i] = '1';
-        dfs(root->right, str, i+1);
-      }
-      // 2222 was our asigned special key.
-      if(root->coef_ != 2222)
-      {
-        std::cout << "Coefficient: " << root->coef_ << "  Frequency: " << root->freq_ << "  Huffman Code: " << str << std::endl;
-        HuffmanTable_[root->coef_] = str;
-      }
+        if(root->right)
+        {
+            str[i] = '1';
+            dfs(root->right, str, i+1);
+        }
+        // 2222 was our asigned special key.
+        if(root->coef_ != 2222)
+        {
+            std::cout << "Coefficient: " << root->coef_ << "  Frequency: " << root->freq_ << "  Huffman Code: " << str << std::endl;
+            HuffmanTable_[root->coef_] = str;
+        }
 
     }
 

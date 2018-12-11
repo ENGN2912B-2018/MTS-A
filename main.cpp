@@ -64,7 +64,62 @@ void runServer() {
 }
 
 
-int main() {
+std::vector< std::vector<int> > padding(std::vector<int> coefVec)
+{
+  std::vector<int> coefVector;
+  std::vector< std::vector<int> > coefMatrix;
+
+  for(int i=0; i<coefVec.size(); i++)
+  {
+    if(coefVec[i] == 2220)
+    {
+      // resize a vector initializes the empty elements to 0 anyway.
+      coefVector.resize(64);
+      coefMatrix.push_back(coefVector);
+      coefVector.clear();
+    }
+    else{ coefVector.push_back(coefVec[i]); }
+
+  }
+
+  return coefMatrix;
+};
+
+
+std::vector< std::vector<int> > recoverCoefMatrix()
+{
+  int i, j;
+  int hBlockCount, startingRow, startingColumn;
+  std::vector< std::vector<int> > coefMatrix;
+
+  hBlockCount = fileColumns_/8;
+
+  coefMatrix.resize(fileRows_);
+  for(i=0; i< coefMatrix.size(); i++){ coefMatrix[i].resize(fileColumns_); }
+
+  for(int i=0; i<coefMatrix2.size(); i+=)
+  {
+
+    startingRow = i / hBlockCount;
+    start_column = (i % hBlockCount) * 8;
+
+    for(i = startingRow; i < startingRow + blockSize_; i++)
+    {
+      for(j = startingColumn; j < startingColumn + blockSize_; j++)
+      {
+        coefMatrix[i][j] = ;
+      }
+    }
+
+  }
+
+  return coefMatrix;
+}
+
+
+
+int main()
+{
 
   // std::thread thread1(runServer);
   // std::thread thread2(runClient);
@@ -78,27 +133,28 @@ int main() {
 
   // statisticalAnalysis stats;
 
-
-  std::vector<int> HuffmanVec;
-  std::vector< std::vector<bool> > HuffmanCodes;
-
   HuffmanCoding Huffman;
+
+  std::vector<int> coefVec;
+  std::vector< std::vector<bool> > HuffmanVec;
+
   Image testImage1("../images/dog.binary.pgm", true);
-
-  // compress performs both dct and quantization.
+  // Compress performs both dct and quantization.
   testImage1.compress(50);
-  // zigzag scan creates a matrix of coefficients scanned in zigzag fashion block by block.
-  HuffmanVec = testImage1.zigzagScan();
+  // Zigzag scan creates a vector of coefficients scanned in zigzag fashion block by block(integer 2220 signals end of block).
+  coefVec = testImage1.zigzagScan();
+  // Build the Huffman tree from all coefficients and generate a vector that contains
+  // the Huffman coded coefficients for the whole image.
+  HuffmanVec = Huffman.encode(coefVec);
 
-  HuffmanCodes = Huffman.encode(HuffmanVec);
+  /*
+    put the codes for sending the bool vectors over the network here.
+  */
 
-  std::vector<int> coefVec = Huffman.decode(HuffmanCodes);
+  std::vector<int> coefVec2 = Huffman.decode(HuffmanVec);
+  std::vector< std::vector<int> > coefMatrix2 = padding(coefVec2);
 
-  for(int i=0; i<30; i++){ std::cout << HuffmanVec[i] << " "; }
-  std::cout << "\n\n";
-
-  for(int i=0; i<30; i++){ std::cout << coefVec[i] << " "; }
-  std::cout << "\n";
+  // for(int i=0; i<20; i++){ std::cout << coefMatrix2[0][i] << " "; }
   // testImage1.decompress();
 
   // testImage1.saveImage("../images/dog/dog70.binary.pgm", true);
