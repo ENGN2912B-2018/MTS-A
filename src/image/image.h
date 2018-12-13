@@ -3,6 +3,7 @@
 #include <fstream>
 #include <sstream>
 #include <cmath>
+#include <ctime>
 #include <iostream>
 #include <string>
 #include <bitset>
@@ -18,30 +19,46 @@ public:
     Image();
 
     Image(std::string fileName, bool binaryFlag){ readFile(fileName, binaryFlag); }
-
+    // read a image file in given directory in binary(binaryFlag = true) or ASCII format.
     void readImage(std::string fileName, bool binaryFlag){ readFile(fileName, binaryFlag); }
-
+    // save a image file in given directory in binary(binaryFlag = true) or ASCII format.
     void saveImage(std::string fileName, bool binaryFlag){ saveFile(fileName, binaryFlag); }
-
+    // compress the imported file sequentially with carious quality ratio and save results in destination folder.
     void sequentialCompression(std::string destinationFolder, bool binaryFlag){ seqComp(destinationFolder, binaryFlag); }
-
+    // compress the imported file with given quality ratio. Performs dct then quantization.
     void compress(unsigned int qRatio)
     {
-        std::cout << "Compressing file with quality ratio of " << qRatio << "...\n" << std::endl;
+        time_t itimer, ftimer;
+        double seconds;
+
+        std::cout << "Compressing file with quality ratio of " << qRatio << "..." << std::endl;
+
+        time(&itimer);
         dct();
         quantization(qRatio);
-        std::cout << "Image compression completed.\n" << std::endl;
-    }
+        time(&ftimer);
+        seconds = difftime(ftimer, itimer);
 
+        std::cout << "Image compression completed. It took " << seconds << " seconds.\n" << std::endl;
+    }
+    // decompress the image of coefficients stored in coefMatrix_ using inverse dct.
     void decompress()
     {
+        time_t itimer, ftimer;
+        double seconds;
+
         std::cout << "\nDecompressing file..." << std::endl;
+
+        time(&itimer);
         idct();
-        std::cout << "Image decompression completed."
+        time(&ftimer);
+        seconds = difftime(ftimer, itimer);
+
+        std::cout << "Image decompression completed. It took " << seconds << " seconds.\n" << std::endl;
     }
-
+    // compress an external coefficient matrix.
     void decompress(std::vector< std::vector<double> > coefMatrix){ idct(coefMatrix); }
-
+    // zigzag scan the coffecient matrix block by block, then call the encode method within HuffmanCoding member class.
     std::vector<std::vector<bool>> HuffmanEncode()
     {
         std::vector<std::vector<bool>> HuffmanVec;
@@ -51,7 +68,7 @@ public:
 
         return HuffmanVec;
     }
-
+    // call the decode method within HuffmanCoding member class, then unpack the coefficients in zigzag order.
     void HuffmanDecode(std::vector<std::vector<bool>> HuffmanVec)
     {
         std::vector<int> decodedVec;
@@ -164,7 +181,6 @@ private:
 
                 fileContent << inputFile.rdbuf();
                 fileContent >> fileType;
-
                 //could also check file extension with boost filesystem instead.
                 if(fileType != "P2"){ std::cerr << "Wrong file type, please select an ASCII pgm file instead." << std::endl; exit(0); }
                 fileContent >> fileColumns_ >> fileRows_;
@@ -378,8 +394,7 @@ private:
         return zigzagCoefVec;
     }
 
-    // perform zigzag scan for all quantized coefficients blocks and save the result to
-    // coefVector_ before performing Huffman encoding.
+    // perform zigzag scan for all quantized coefficients blocks and save the result to coefVector_ before performing Huffman encoding.
     void zigzagScan()
     {
         int i, j, k;
@@ -539,16 +554,18 @@ private:
 
     }
 
-    // compress the image sequentially by incrementing quality ratio 10 at a time and save all the images in a destination folder.
-    // error analysis is also performed.
+    // compress the image sequentially by incrementing quality ratio 10 at a time and save all the images in a destination folder. Error analysis is also performed.
     void seqComp(std::string compressedFileFolder, bool binaryFlag)
     {
         std::string compressedFileName;
+        std::vector< std::vector<bool> > HuffmanVec;
         std::vector< std::vector<int> > originalInt, compressedInt;
 
         for(int i=0; i<100; i+=10)
         {
             compress(i);
+            HuffmanVec = HuffmanEncode();
+            HuffmanDecode(HuffmanVec);
             decompress();
 
             if(binaryFlag == true)
@@ -583,7 +600,7 @@ private:
 
     // file information.
     std::string fileName_;
-    unsigned fileRows_, fileColumns_, maxIntensity_;
+    unsigned fileRows_, fileColumns_, maxIntensity_, fileSize_;
     // size of minimum compression unit in terms of number of pixels.
     const unsigned blockSize_ = 8;
     // External classes used.

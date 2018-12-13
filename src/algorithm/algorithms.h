@@ -71,12 +71,21 @@ public:
 
         buildHuffmanTable(coefVec);
 
+        // also record the length of all Huffman code in bits.
+        int compressedLength = coefVec.size() * 8;
+
         for(int i=0; i < coefVec.size(); i++)
         {
             HuffmanString = getHuffmanCode( coefVec[i] );
             bitsVec = getBitsVec(HuffmanString);
+            HuffmanLength_ += bitsVec.size();
             HuffmanBitsVec.push_back(bitsVec);
         }
+
+        int HuffmanLength = getHuffmanLength();
+
+        std::cout << "\nHuffman Summary:" << std::endl;
+        std::cout << "Compressed file size: " << compressedLength << "  Huffman file size: " << HuffmanLength << std::endl;
 
         return HuffmanBitsVec;
     }
@@ -325,6 +334,10 @@ private:
 
         return node->coef_;
     }
+
+    int getHuffmanLength(){ return HuffmanLength_; }
+
+    int HuffmanLength_ = 0;
 
     struct node* HuffmanRoot_;
 

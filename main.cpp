@@ -78,7 +78,7 @@ int main()
   // read a pgm file in given directory, second argument is binary flag(true for bianry pgm and false otherwise).
   Image testImage1("../images/dog.binary.pgm", true);
   // compress performs both dct and quantization.
-  testImage1.compress(90);
+  testImage1.compress(31);
   // zigzag scan to get the cofficients block by block, then Huffman encode all coefficeints in the image.
   HuffmanVec = testImage1.HuffmanEncode();
 
@@ -91,5 +91,5 @@ int main()
   // performs inverse dct.
   testImage1.decompress();
   // save the decompressed image in given directory as binary or ascii file(true for binary).
-  testImage1.saveImage("../images/dog/dog90.binary.pgm", true);;
+  testImage1.saveImage("../images/dog/dog31.binary.pgm", true);
 }
