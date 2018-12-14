@@ -4,6 +4,8 @@
 #include <sstream>
 #include <cmath>
 #include <ctime>
+#include <chrono>
+#include <thread>
 #include <iostream>
 #include <string>
 #include <bitset>
@@ -25,8 +27,8 @@ public:
     void saveImage(std::string fileName, bool binaryFlag){ saveFile(fileName, binaryFlag); }
     // compress the imported file sequentially with carious quality ratio and save results in destination folder.
     void sequentialCompression(std::string destinationFolder, bool binaryFlag){ seqComp(destinationFolder, binaryFlag); }
-    // compress the imported file with given quality ratio. Performs dct then quantization.
-    void compress(unsigned int qRatio)
+    // compress the imported file with given quality ratio. Performs dct then quantization. Second argument is the multithreading flag.
+    void compress(unsigned int qRatio, bool mtFlag)
     {
         time_t itimer, ftimer;
         double seconds;
@@ -34,15 +36,16 @@ public:
         std::cout << "Compressing file with quality ratio of " << qRatio << "..." << std::endl;
 
         time(&itimer);
-        dct();
+        if(mtFlag == true){ mtDct(); }
+        else{ dct(); }
         quantization(qRatio);
         time(&ftimer);
         seconds = difftime(ftimer, itimer);
 
         std::cout << "Image compression completed. It took " << seconds << " seconds.\n" << std::endl;
     }
-    // decompress the image of coefficients stored in coefMatrix_ using inverse dct.
-    void decompress()
+    // decompress the image of coefficients stored in coefMatrix_ using inverse dct. (true for using multithreaded decompression)
+    void decompress(bool mtFlag)
     {
         time_t itimer, ftimer;
         double seconds;
@@ -50,14 +53,13 @@ public:
         std::cout << "\nDecompressing file..." << std::endl;
 
         time(&itimer);
-        idct();
+        if(mtFlag == true){ mtIdct(); }
+        else{ idct(); }
         time(&ftimer);
         seconds = difftime(ftimer, itimer);
 
         std::cout << "Image decompression completed. It took " << seconds << " seconds.\n" << std::endl;
     }
-    // compress an external coefficient matrix.
-    void decompress(std::vector< std::vector<double> > coefMatrix){ idct(coefMatrix); }
     // zigzag scan the coffecient matrix block by block, then call the encode method within HuffmanCoding member class.
     std::vector<std::vector<bool>> HuffmanEncode()
     {
@@ -239,13 +241,31 @@ private:
         {
             for(j=0; j < fileColumns_/8; j++)
             {
-                dct(8*i, 8*j);
+                blockDct(8*i, 8*j);
             }
         }
 
     }
 
-    void dct(unsigned start_row, unsigned start_column)
+    void mtDct()
+    {
+        #pragma omp parallel for
+        for(int i = 0; i < fileRows_/8; i++)
+        {
+            rowDct(8 * i);
+        }
+
+    }
+
+    void rowDct(unsigned start_row)
+    {
+        for(int j = 0; j < fileColumns_/8; j++)
+        {
+            blockDct(start_row, 8 * j);
+        }
+    }
+
+    void blockDct(unsigned start_row, unsigned start_column)
     {
         int i, j, m, n;
         double c_i, c_j, sum;
@@ -473,13 +493,29 @@ private:
         {
             for(j=0; j < fileColumns_/8; j++)
             {
-                idct(8*i, 8*j);
+                blockIdct(8*i, 8*j);
             }
         }
     }
 
+    void mtIdct()
+    {
+        #pragma omp parallel for
+        for(int i = 0; i < fileRows_/8; i++)
+        {
+            rowIdct(8 * i);
+        }
+    }
+
+    void rowIdct(unsigned start_row)
+    {
+        for(int j = 0; j < fileColumns_/8; j++)
+        {
+            blockIdct(start_row, 8 * j);
+        }
+    }
     // performs inverse discrete cosine transform on a single block defined by the starting row and starting column.
-    void idct(unsigned start_row, unsigned start_column)
+    void blockIdct(unsigned start_row, unsigned start_column)
     {
         int i, j, m, n;
         double c_m, c_n, sum;
@@ -510,50 +546,6 @@ private:
 
     }
 
-    // performs idct on a input coefMatrix.
-    void idct(std::vector< std::vector<double> > coefMatrix)
-    {
-        int i, j;
-        for(i=0; i < fileRows_/8; i++)
-        {
-            for(j=0; j < fileColumns_/8; j++)
-            {
-                idct(8*i, 8*j, coefMatrix);
-            }
-        }
-    }
-
-    void idct(unsigned start_row, unsigned start_column, std::vector< std::vector<double> > coefMatrix)
-    {
-        int i, j, m, n;
-        double c_m, c_n, sum;
-
-        for(i=start_row; i < start_row + blockSize_; i++)
-        {
-            for(j=start_column; j< start_column + blockSize_; j++)
-            {
-                sum = 0.0;
-
-                for(m=start_row; m < start_row + blockSize_; m++)
-                {
-                    for(n=start_column; n < start_column + blockSize_; n++)
-                    {
-                        if(m%8 == 0){ c_m = std::sqrt(1.0/blockSize_); }
-                        else{ c_m = std::sqrt(2.0/blockSize_); }
-
-                        if(n%8 == 0){ c_n = std::sqrt(1.0/blockSize_); }
-                        else{ c_n = std::sqrt(2.0/blockSize_); }
-
-                        sum += c_m * c_n * coefMatrix[m][n] * std::cos( (2.0 * (i%8) + 1) * (m%8) * pi / (2.0 * blockSize_) ) * std::cos( (2.0 * (j%8) + 1) * (n%8) * pi / (2.0 * blockSize_) );
-                    }
-                }
-
-            compIntMatrix_[i][j] = (int)(sum);
-            }
-        }
-
-    }
-
     // compress the image sequentially by incrementing quality ratio 10 at a time and save all the images in a destination folder. Error analysis is also performed.
     void seqComp(std::string compressedFileFolder, bool binaryFlag)
     {
@@ -563,10 +555,10 @@ private:
 
         for(int i=0; i<100; i+=10)
         {
-            compress(i);
+            compress(i, true);
             HuffmanVec = HuffmanEncode();
             HuffmanDecode(HuffmanVec);
-            decompress();
+            decompress(true);
 
             if(binaryFlag == true)
             {
