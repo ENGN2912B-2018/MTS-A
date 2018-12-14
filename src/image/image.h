@@ -70,7 +70,6 @@ public:
         std::cout << "\nDecompressing file..." << std::endl;
         idct();
         std::cout << "Image decompression completed.";
-    }
 
         time(&itimer);
         if(mtFlag == true){ mtIdct(); }

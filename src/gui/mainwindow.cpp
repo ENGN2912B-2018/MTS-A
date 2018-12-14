@@ -127,7 +127,7 @@ void MainWindow::compress() {
     // create custom image class and compress data
     Image img(imageFilename.toStdString(), image.height(), image.width(), intensities);
     unsigned int ratio = ratioLabel->text().toInt();
-    img.compress(ratio);
+    img.compress(ratio, true);
 
     statusBar()->showMessage(QString::fromStdString("Performing huffman encoding and sending over network..."), 5000);
     // perform huffman encoding
@@ -141,7 +141,7 @@ void MainWindow::compress() {
     client_.write(flattened);
 
     // save the compressed image as a temporary file to display result (QImage::fromData(const uchar *data, int size, const char* format));
-    img.decompress();
+    img.decompress(true);
 
     //vector<vector<int>> compressed = img.getCompressedIntensities();
     //QImage newImage(image.width(), image.height(), image.format());
