@@ -75,22 +75,24 @@ int main()
   // thread2.join();
 
   // binary vector for Huffman encoded coefficients to send over to the server.
+  bool binaryFlag = false, multithreadingFlag = true;
+
   std::vector< std::vector<bool> > HuffmanVec;
   // read a pgm file in given directory, second argument is binary flag(true for bianry pgm and false otherwise).
-  Image testImage1("../images/lena.binary.pgm", true);
+  Image testImage("../images/lena.ascii.pgm", binaryFlag);
   // compress performs both dct and quantization, second argument is the multithreading flag(true for using openmp).
-  testImage1.compress(35, true);
+  testImage.compress(35, multithreadingFlag);
   // zigzag scan to get the cofficients block by block, then Huffman encode all coefficeints in the image.
-  HuffmanVec = testImage1.HuffmanEncode();
+  HuffmanVec = testImage.HuffmanEncode();
 
   /*
     put the codes for sending the bool vectors over the network here.
   */
 
   // decoded the binary vectors back to coefficients and unpack them into the coefficient image in zigzag fashion.
-  testImage1.HuffmanDecode(HuffmanVec);
+  testImage.HuffmanDecode(HuffmanVec);
   // performs inverse dct.
-  testImage1.decompress(true);
+  testImage.decompress(multithreadingFlag);
   // save the decompressed image in given directory as binary or ascii file(true for binary).
-  testImage1.saveImage("../images/lena/lena.binary.pgm", true);
+  testImage.saveImage("../images/lena/lena35.ascii.pgm", binaryFlag);
 }

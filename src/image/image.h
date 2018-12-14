@@ -23,10 +23,13 @@ public:
     Image(std::string fileName, bool binaryFlag){ readFile(fileName, binaryFlag); }
     // read a image file in given directory in binary(binaryFlag = true) or ASCII format.
     void readImage(std::string fileName, bool binaryFlag){ readFile(fileName, binaryFlag); }
+
     // save a image file in given directory in binary(binaryFlag = true) or ASCII format.
     void saveImage(std::string fileName, bool binaryFlag){ saveFile(fileName, binaryFlag); }
+
     // compress the imported file sequentially with carious quality ratio and save results in destination folder.
     void sequentialCompression(std::string destinationFolder, bool binaryFlag){ seqComp(destinationFolder, binaryFlag); }
+
     // compress the imported file with given quality ratio. Performs dct then quantization. Second argument is the multithreading flag.
     void compress(unsigned int qRatio, bool mtFlag)
     {
@@ -44,6 +47,7 @@ public:
 
         std::cout << "Image compression completed. It took " << seconds << " seconds.\n" << std::endl;
     }
+
     // decompress the image of coefficients stored in coefMatrix_ using inverse dct. (true for using multithreaded decompression)
     void decompress(bool mtFlag)
     {
@@ -60,6 +64,7 @@ public:
 
         std::cout << "Image decompression completed. It took " << seconds << " seconds.\n" << std::endl;
     }
+
     // zigzag scan the coffecient matrix block by block, then call the encode method within HuffmanCoding member class.
     std::vector<std::vector<bool>> HuffmanEncode()
     {
@@ -70,6 +75,7 @@ public:
 
         return HuffmanVec;
     }
+
     // call the decode method within HuffmanCoding member class, then unpack the coefficients in zigzag order.
     void HuffmanDecode(std::vector<std::vector<bool>> HuffmanVec)
     {
