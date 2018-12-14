@@ -3,6 +3,7 @@
 #include <tuple>
 #include <bitset>
 #include <cmath>
+#include <cassert>
 
 class statisticalAnalysis
 {

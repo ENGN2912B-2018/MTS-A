@@ -91,5 +91,5 @@ int main()
   // performs inverse dct.
   testImage1.decompress();
   // save the decompressed image in given directory as binary or ascii file(true for binary).
-  testImage1.saveImage("../images/dog/dog90.binary.pgm", true);;
+  testImage1.saveImage("../images/dog/dog90.binary.pgm", true);
 }

@@ -25,7 +25,7 @@ typedef boost::asio::ip::tcp::resolver::iterator resolver_iterator;
 
 namespace server {
 
-const int BUFFER_SIZE = 8192;
+const int BUFFER_SIZE = 1000000;
 
 /// A class representing a clients Session.
 /// Each session is responsible for communicating with a singular client.

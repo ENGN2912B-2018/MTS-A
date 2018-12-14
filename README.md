@@ -27,11 +27,18 @@ Source code is currently kept in the `src` directory and the file structure will
 * *Week of December 5th*: Implement more complex network structures that can navigate large user traffic while maintaining high speed and high quality services.
   - Task management: both Luis and Yang would work on this task.
 
+## Due Dates
+* Project Update 3: December 7th  (11:59pm)
+* Final Project Code Repository: December 16th (11:59pm)
+* Final Team Project Report: December 18th (11:59pm)
+* Final Team Project Presentations: December 20th (5:00pm)
+
 ## Backlog
+
 * Use QT or boost to handle multithreading instead of using <thread>.
 * Implement a ways to shutdown the server in real-time.
-* Design general interface for compression algorithms.
+* Load JPEG files through OpenCV
 * Implement the multithreaded wavelet transform algorithm for JPEG.
 * Implement real-time image reconstruction  method for the wavelet transform algorithm
-* Design GUI application interface for clients
+* Design GUI application interface for clients (QT)
 * Integrate client application with networking structure to allow for image upload and download

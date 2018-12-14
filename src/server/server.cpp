@@ -15,8 +15,9 @@ void Session::do_read() {
   auto self(shared_from_this());
   socket_.async_read_some(buffer(data_, BUFFER_SIZE), [this, self](error_code ec, size_t length) {
     if (!ec) {
-      std::cout << "server recieved " << length << " bytes" << std::endl;
-      receive_queue_.push_back(data_);
+      std::cout << "server recieved a message!" << std::endl;
+      //std::cout << data_ << std::endl;
+      //receive_queue_.push_back(data_);
       do_write();
     }
   });

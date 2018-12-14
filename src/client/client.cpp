@@ -4,9 +4,16 @@
 namespace client {
 
 Client::Client(io_service &io_service, resolver_iterator endpoint_iterator)
-      : io_service_(io_service), socket_(io_service) {
-        do_connect(endpoint_iterator);
-      }
+  : io_service_(io_service), socket_(io_service) {
+  do_connect(endpoint_iterator);
+}
+
+Client::Client(Observer observer, io_service &io_service, resolver_iterator endpoint_iterator)
+  : observer_(observer), io_service_(io_service), socket_(io_service) {
+  do_connect(endpoint_iterator);
+}
+
+Client::~Client() { close(); }
 
 void Client::write(const char* msg) {
   io_service_.post([this, msg]() {
@@ -14,6 +21,14 @@ void Client::write(const char* msg) {
     send_queue_.push_back(msg);
     if (!write_in_progress) { do_write(); }
   });
+}
+
+void Client::write(vector<bool> &msg) {
+  bool copy[msg.size()];
+  for (int i = 0; i < msg.size(); i++) copy[i] = msg.at(i);
+
+  char *charData = reinterpret_cast<char*>(copy);
+  write(charData);
 }
 
 void Client::close() {
@@ -37,8 +52,7 @@ void Client::do_read() {
   // here we have to use async_read_some, because async_read completition conditions aren't flexible
   socket_.async_read_some(buffer(res_msg_, BUFFER_SIZE), [this](error_code ec, size_t len) {
     if (!ec) {
-      receive_queue_.push_back(res_msg_);
-      std::cout << "client received message: " << res_msg_ << std::endl;
+      observer_.observe(res_msg_);
       do_read();
     } else { std::cout << "client read error: " + ec.message() << std::endl; }
   });

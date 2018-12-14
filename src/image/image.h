@@ -17,6 +17,19 @@ public:
 
     Image();
 
+    Image(std::string filename, unsigned rows, unsigned columns, std::vector<std::vector<int>> intensities)
+      : fileName_(filename), fileRows_(rows), fileColumns_(columns) {
+      setMatrices(fileRows_, fileColumns_);
+      unsigned max = 0;
+      for (int i = 0; i < rows; i++) {
+        for (int j = 0; j < columns; j++) {
+          intMatrix_[i][j] = intensities[i][j];
+          if (intensities[i][j] > max) max = intensities[i][j];
+        }
+      }
+      maxIntensity_ = max;
+    }
+
     Image(std::string fileName, bool binaryFlag){ readFile(fileName, binaryFlag); }
 
     void readImage(std::string fileName, bool binaryFlag){ readFile(fileName, binaryFlag); }
@@ -37,7 +50,7 @@ public:
     {
         std::cout << "\nDecompressing file..." << std::endl;
         idct();
-        std::cout << "Image decompression completed."
+        std::cout << "Image decompression completed.";
     }
 
     void decompress(std::vector< std::vector<double> > coefMatrix){ idct(coefMatrix); }
@@ -58,6 +71,16 @@ public:
 
         decodedVec = Huffman_.decode(HuffmanVec);
         unzigzag(decodedVec);
+    }
+
+    std::vector<std::vector<int>> getIntensities()
+    {
+      return intMatrix_;
+    }
+
+    std::vector<std::vector<int>> getCompressedIntensities()
+    {
+      return compIntMatrix_;
     }
 
 private:
@@ -584,17 +607,22 @@ private:
     // file information.
     std::string fileName_;
     unsigned fileRows_, fileColumns_, maxIntensity_;
+
     // size of minimum compression unit in terms of number of pixels.
     const unsigned blockSize_ = 8;
+
     // External classes used.
     HuffmanCoding Huffman_;
     statisticalAnalysis stats_;
+
     // Zigzag scanned vector of coefficients to be Huffman encoded.
     std::vector<int> coefVector_;
+
     // matrix of pixel intensities, compressed intensities and coefficients.
     std::vector< std::vector<int> > intMatrix_;
     std::vector< std::vector<int> > compIntMatrix_;
     std::vector< std::vector<double> > coefMatrix_;
+
     // JEPG standard quantization matrix.
     std::vector< std::vector<int> > qMatrix = { {16, 11, 10, 16, 24, 40, 51, 61}, {12, 12, 14, 19, 26, 58, 60, 55},
     {14, 13, 16, 24, 40, 57, 69, 56}, {14, 17, 22, 29, 51, 87, 80, 62}, {18, 22, 37, 56, 68, 109, 103, 77},
