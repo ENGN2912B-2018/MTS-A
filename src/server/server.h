@@ -1,6 +1,7 @@
 #pragma once
 
 #include <deque>               // for deque
+#include <utility>
 #include <memory>              // for enable_shared_from_this
 #include <string>              // for string
 #include <vector>              // for vector
@@ -8,7 +9,7 @@
 #include <cstddef>             // for size_t
 #include <boost/asio.hpp>      // for boost::asio
 
-
+using std::pair;
 using std::deque;
 using std::string;
 using std::vector;
@@ -18,14 +19,15 @@ using namespace boost::asio;
 using boost::asio::ip::tcp;
 using boost::system::error_code;
 
-typedef deque<const char*> message_queue;
+typedef deque<pair<const char*, size_t>> message_container;
 typedef boost::asio::ip::tcp::acceptor acceptor;
 typedef boost::asio::ip::tcp::socket boost_socket;
 typedef boost::asio::ip::tcp::resolver::iterator resolver_iterator;
 
+
 namespace server {
 
-const int BUFFER_SIZE = 1000000;
+const int BUFFER_SIZE = 10000;
 
 /// A class representing a clients Session.
 /// Each session is responsible for communicating with a singular client.
@@ -50,8 +52,7 @@ class Session : public std::enable_shared_from_this<Session> {
     //= Member Variables =======================================================
     char data_[BUFFER_SIZE];        // data buffer used for sending messages
     boost_socket socket_;           // the socket we are using for communication
-    message_queue send_queue_;      // queue for sending message
-    message_queue receive_queue_;   // queue for received messages
+    message_container receive_queue_;   // queue for received messages
 };
 
 

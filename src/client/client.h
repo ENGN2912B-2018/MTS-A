@@ -23,7 +23,7 @@ typedef boost::asio::ip::tcp::resolver::iterator resolver_iterator;
 
 namespace client {
 
-const int BUFFER_SIZE = 1000000;
+const int BUFFER_SIZE = 10000;
 
 /// An interface used to specify an Object that would view what messages the client receives
 class Observer {

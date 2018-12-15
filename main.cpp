@@ -1,26 +1,50 @@
-#include <iostream>
 #include <string>
 #include <omp.h>
 #include <thread>
-#include <chrono>
 #include <cassert>
+#include <iostream>
 #include <boost/asio.hpp>
-#include <boost/bind.hpp>
-#include <boost/date_time/posix_time/posix_time.hpp>
-#include <boost/array.hpp>
+#include <QApplication>
 
-#include "image/image.h"
 #include "client/client.h"
+#include "gui/mainwindow.h"
+#include "image/image.h"
 #include "server/server.h"
 
+using namespace gui;
 using namespace client;
 using namespace server;
 
+using std::vector;
 using boost::asio::ip::tcp;
 
 
-void runClient() {
+void runServer() {
   try {
+    boost::asio::io_service io_service;
+    boost::asio::io_service::work work( io_service );
+    Server s(io_service, 8008);
+    io_service.run();
+  } catch (std::exception e) {
+   std::cerr << e.what() << std::endl;
+  }
+}
+
+int main(int argc, char* argv[]) {
+  // try running the server and client
+  try {
+    // run the server
+    boost::asio::io_service server_io;
+    boost::asio::io_service::work server_work(server_io);
+    Server s(server_io, 8008);
+
+    std::thread server([&server_io](){
+      server_io.run();
+    });
+    server.detach();
+
+
+    // run the client
     boost::asio::io_service io_service;
     boost::asio::io_service::work work(io_service);
 
@@ -34,65 +58,20 @@ void runClient() {
     // port number here should be a string not int
     tcp::resolver::query query(hostName, "8008");
     tcp::resolver::iterator endpoint_iterator = resolver.resolve(query);
+    t.detach();
 
-    std::cout << "about to create client" << std::endl;
-    Client c(io_service, endpoint_iterator);
-    c.write("Hello World");
-    c.write("How are you?");
-    c.write("Why don't I get a response?");
+    SimpleObserver obs;
+    Client c(obs, io_service, endpoint_iterator);
 
-    // send image over (1352 bytes to send)
-    //vector<vector<unsigned>> img = readImage("../images/feep.pgm");
-    //vector<vector<double>> coeff = toCoefficients(img);
-    //vector<char> ser = serialize(coeff);
-    //c.write(ser.data());
-    t.join();
+    QApplication app(argc, argv);
+    MainWindow window(c);
+    window.show();
+
+    app.exec();
+    server_io.stop();
   } catch (std::exception& e) {
     std::cerr << e.what() << std::endl;
   }
-}
 
-void runServer() {
-  try {
-    boost::asio::io_service io_service;
-    boost::asio::io_service::work work( io_service );
-    Server s(io_service, 8008);
-    io_service.run();
-  } catch (std::exception e) {
-   std::cerr << e.what() << std::endl;
-  }
-
-}
-
-
-int main()
-{
-
-  // std::thread thread1(runServer);
-  // std::thread thread2(runClient);
-
-  // thread1.join();
-  // thread2.join();
-
-  // binary vector for Huffman encoded coefficients to send over to the server.
-  bool binaryFlag = false, multithreadingFlag = true;
-
-  std::vector< std::vector<bool> > HuffmanVec;
-  // read a pgm file in given directory, second argument is binary flag(true for bianry pgm and false otherwise).
-  Image testImage("../images/lena.ascii.pgm", binaryFlag);
-  // compress performs both dct and quantization, second argument is the multithreading flag(true for using openmp).
-  testImage.compress(35, multithreadingFlag);
-  // zigzag scan to get the cofficients block by block, then Huffman encode all coefficeints in the image.
-  HuffmanVec = testImage.HuffmanEncode();
-
-  /*
-    put the codes for sending the bool vectors over the network here.
-  */
-
-  // decoded the binary vectors back to coefficients and unpack them into the coefficient image in zigzag fashion.
-  testImage.HuffmanDecode(HuffmanVec);
-  // performs inverse dct.
-  testImage.decompress(multithreadingFlag);
-  // save the decompressed image in given directory as binary or ascii file(true for binary).
-  testImage.saveImage("../images/lena/lena35.ascii.pgm", binaryFlag);
+  return 0;
 }

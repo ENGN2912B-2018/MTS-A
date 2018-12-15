@@ -129,8 +129,8 @@ void MainWindow::compress() {
     unsigned int ratio = ratioLabel->text().toInt();
     img.compress(ratio, true);
 
-    statusBar()->showMessage(QString::fromStdString("Performing huffman encoding and sending over network..."), 5000);
     // perform huffman encoding
+    statusBar()->showMessage(QString::fromStdString("Performing huffman encoding and sending over network..."), 5000);
     vector<vector<bool>> HuffmanVec = img.HuffmanEncode();
     vector<bool> flattened;
     for (auto row : HuffmanVec)
@@ -139,9 +139,12 @@ void MainWindow::compress() {
 
     // send over the network
     client_.write(flattened);
+    statusBar()->showMessage(QString::fromStdString("Succesfully compressed and sent image!"), 2000);
 
-    // save the compressed image as a temporary file to display result (QImage::fromData(const uchar *data, int size, const char* format));
+    // save the compressed image as a temporary file to display result
     img.decompress(true);
+    img.saveImage(compressedFilename.toStdString(), true);
+    statusBar()->showMessage(QString::fromStdString("Displaying compresed image..."), 2000);
 
     //vector<vector<int>> compressed = img.getCompressedIntensities();
     //QImage newImage(image.width(), image.height(), image.format());
@@ -152,8 +155,6 @@ void MainWindow::compress() {
     //}
     //newImage.save(compressedFilename);
 
-    statusBar()->showMessage(QString::fromStdString("Succesfully compressed and sent image!"), 2000);
-    img.saveImage(compressedFilename.toStdString(), true);
     loadFile(compressedFilename, true);
     compressBtn->setEnabled(true);
   }

@@ -32,10 +32,6 @@ add_subdirectory(src)
 
 # Create the executables
 add_executable(mainExecutable main.cpp)
-add_executable(client client.cpp)
-add_executable(server server.cpp)
 
 # Tell the linker to link the executables to the mainLibrary, Boost, and Qt5
 target_link_libraries(mainExecutable mainLibrary ${Boost_LIBRARIES} ${Qt5Widgets_LIBRARIES})
-target_link_libraries(server mainLibrary ${Boost_LIBRARIES} ${Qt5Widgets_LIBRARIES})
-target_link_libraries(client ${Boost_LIBRARIES} ${Qt5Widgets_LIBRARIES} mainLibrary)

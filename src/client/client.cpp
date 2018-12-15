@@ -1,4 +1,5 @@
 #include <iostream>           // for std::cout
+#include <cstring>
 #include "client.h"
 
 namespace client {
@@ -24,11 +25,14 @@ void Client::write(const char* msg) {
 }
 
 void Client::write(vector<bool> &msg) {
-  bool copy[msg.size()];
-  for (int i = 0; i < msg.size(); i++) copy[i] = msg.at(i);
-
-  char *charData = reinterpret_cast<char*>(copy);
-  write(charData);
+  char data[msg.size() + 4];
+  for (int i = 0; i < msg.size(); i++)
+    data[i] = msg.at(i) ? '1' : '0';
+  data[msg.size()] = 'E';
+  data[msg.size() + 1] = 'N';
+  data[msg.size() + 2] = 'D';
+  data[msg.size() + 3] = '\0';
+  write(data);
 }
 
 void Client::close() {
@@ -40,6 +44,7 @@ void Client::close() {
 
 void Client::do_write() {
   const char* msg = send_queue_.front();
+  int length = strlen(msg);
   async_write(socket_, buffer(msg, BUFFER_SIZE), [this](error_code ec, size_t len) {
     if (!ec) {
       send_queue_.pop_front();
