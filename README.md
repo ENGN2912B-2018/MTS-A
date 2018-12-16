@@ -1,4 +1,4 @@
-# Parallel Compression Through Networks
+# Parallel Image Compression Through Networks
 **Course Information:**
 
     ENGN 2610B - Scientific Computing in C++
@@ -22,9 +22,13 @@
 Goal of this program is to provide users a parallelized image compression service through an asynchronous network.
 
 ## Algorithms
-The full JPEG compression algorithm was implemented independently.
-- Discrete Cosine Transform
+We implemented the following algorithms independently.
+- Parallelized Discrete Cosine Transform(DCT)
+
+Accomplished by implementing a block-wise DCT and assign each thread an equal amount of blocks to compress/decompress.    
 - Quantization
+
+We used the standard JPEG quantization matrix and quality ratio formalism.
 - Huffman Coding
 
 ## Network Programming
@@ -68,3 +72,8 @@ Source code is kept in the `src` directory.
 - Add peer-to-peer network model.
 
 ## Author Contributions
+Luis Aguirre:
+    As the software architect, Luis is responsible for building and testing of the client-server model and the asynchronous network model. He also designed the GUI of the software. Specifically, he wrote the source code for client class, server class and the gui class.
+
+Yang Wang:
+    As the algorithm engineer, Yang is responsible for designing, implementing and testing the image processing, image compression and compression analysis algorithms. Specifically, he wrote the source code for the image class, the statistical analysis class and the Huffman coding class.
