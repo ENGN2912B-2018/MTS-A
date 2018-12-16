@@ -1,17 +1,21 @@
 # Project Description
 Course Information:
+
     ENGN 2610B - Scientific Computing in C++
+
     Fall 2018, Brown University
 
 Project Title:
+
     Parallel Compression Through Networks
 
 Team Information:
+
     Multithreading and Socket Programming - Team A
 
-    Algorithm Engineer: Yang Wang, yang_wang1@brown.edu
-    Software Architect: Luis Aguirre, luis_aguirre@brown.edu
-    
+- Algorithm Engineer: Yang Wang, yang_wang1@brown.edu
+- Software Architect: Luis Aguirre, luis_aguirre@brown.edu
+
 
 ## Build instructions
 The project uses CMake for compilation on the CCV environment. For the initial setup you can run the following from the source directory.
