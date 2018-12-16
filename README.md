@@ -24,11 +24,9 @@ Goal of this program is to provide users a parallelized image compression servic
 ## Algorithms
 We implemented the following algorithms independently.
 - Parallelized Discrete Cosine Transform(DCT)
-
-Accomplished by implementing a block-wise DCT and assign each thread an equal amount of blocks to compress/decompress.    
+    Accomplished by implementing a block-wise DCT and assign each thread an equal amount of blocks to compress/decompress.    
 - Quantization
-
-We used the standard JPEG quantization matrix and quality ratio formalism.
+    We used the standard JPEG quantization matrix and quality ratio formalism to compress information stored in the high frequency Fourier coefficients.
 - Huffman Coding
 
 ## Network Programming
