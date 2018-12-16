@@ -19,28 +19,38 @@
 
 
 ## Algorithms
-
-
+The full JPEG compression algorithm was implemented independently.
+- Discrete Cosine Transform
+- Quantization
+- Huffman Coding
+ 
 ## Network Programming
-
+Client-server model with TCP communication protocol was implemented to transfer Huffman codes through an asynchronous network.
 
 ## Software Interface
 
 
-## Build Instructions
-The project uses CMake for compilation on the CCV environment. For the initial setup you can run the following from the source directory.
+## Build Instructions and Testing.
+The project uses CMake for building and it has been tested on Linux systems.
+To build and compile the program, you can run the following from the 'src' directory.
 ```
 mkdir build
 cd build
 cmake -D CMAKE_CXX_COMPILER=g++ ..
+make
 ```
-Then compile the project by running `make` in the `build/` directory.
+Then run the executable to use the software.
 
 ## Dependencies
-The project depends on Boost ASIO library for asynchronous networking. It has been tested with Boost 1.63.0 and is expected to work with more recent versions. On the CCV environment you will need to have the Boost module loaded.
+The project depends on Boost ASIO library for asynchronous networking and QT library for user interface. It has been tested with Boost 1.63.0 and is expected to work with more recent versions. On the CCV environment you will need to have the Boost module loaded.
 
 ## Project Structure
-Source code is currently kept in the `src` directory and the file structure will later be expanded as we add more code. In the root directory we keep a `main.cpp` file that can be used to test the program.
+Source code is kept in the `src` directory.
+- image folder contains the main image class used for image processing(read, write) and compression algorithms(parallelized discrete cosine transform, quantization, zigzag scan).
+- algorithm folder contains the code for statistical analysis(MSE and PSNR analysis) and Huffman coding(build Huffman tree, encode and decode).   
+- client folder contains
+- gui folder contains
+- server folder contains
 
 ## Results and Conclusions
 ## Future Work
