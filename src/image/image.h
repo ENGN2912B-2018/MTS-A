@@ -20,6 +20,7 @@ public:
 
     Image(){};
 
+    // constructor for using the QT Image class.
     Image(std::string filename, unsigned rows, unsigned columns, std::vector<std::vector<int>> intensities)
       : fileName_(filename), fileRows_(rows), fileColumns_(columns) {
       setMatrices(fileRows_, fileColumns_);
@@ -68,8 +69,6 @@ public:
         double seconds;
 
         std::cout << "\nDecompressing file..." << std::endl;
-        //idct();
-        //std::cout << "Image decompression completed.";
 
         time(&itimer);
         if(mtFlag == true){ mtIdct(); }

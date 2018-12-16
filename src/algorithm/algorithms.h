@@ -86,7 +86,8 @@ public:
         int HuffmanLength = getHuffmanLength();
 
         std::cout << "\nHuffman Summary:" << std::endl;
-        std::cout << "Compressed file size: " << compressedLength << "  Huffman file size: " << HuffmanLength << std::endl;
+        std::cout << "Compressed file size: " << compressedLength << " bits" << std::endl;
+        std::cout << "Huffman file size: " << HuffmanLength << " bits" << std::endl;
 
         return HuffmanBitsVec;
     }
