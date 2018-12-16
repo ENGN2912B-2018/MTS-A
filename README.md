@@ -15,8 +15,11 @@
     Software Architect:
     Luis Aguirre, luis_aguirre@brown.edu
 
-## Introduction
+**Copyright:**
 
+
+## Introduction
+Goal of this program is to provide users a parallelized image compression service through an asynchronous network.
 
 ## Algorithms
 The full JPEG compression algorithm was implemented independently.
