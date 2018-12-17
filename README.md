@@ -31,7 +31,7 @@ We implemented the following algorithms independently.
     We used the standard JPEG quantization matrix and quality ratio formalism to compress information stored in the high frequency Fourier coefficients.
 - Huffman Coding
 
-    The coefficient matrix was scanned in a zigzag fashion(we also stop scanning as soon as we find more than five zero coefficients) and Huffman encoding was used to assign each Fourier coefficient a bit string.
+    The coefficient matrix was scanned in a zigzag fashion(we also stop scanning as soon as we find more than five zero coefficients) before being Huffman encoded and vice versa(Huffman decoding and zigzag unpacking).
 
 ## Network Programming
 Client-server model with TCP communication protocol was implemented to transfer Huffman codes through an asynchronous network.
@@ -75,8 +75,7 @@ Source code is kept in the `src` directory.
 
 ## Author Contributions
 Luis Aguirre:
-
-    As the software architect, Luis is responsible for building and testing of the client-server model and the asynchronous network model. He also designed the GUI of the software. Specifically, he wrote the source code for client class, server class and the gui class.
+As the software architect, Luis was responsible for building and testing of the client-server model and the asynchronous network model. He also designed the GUI of the software. Specifically, he wrote the source code for client class, server class and the gui class.
 
 Yang Wang:
-    As the algorithm engineer, Yang is responsible for designing, implementing and testing the image processing, image compression and compression analysis algorithms. Specifically, he wrote the source code for the image class, the statistical analysis class and the Huffman coding class.
+As the algorithm engineer, Yang was responsible for designing, implementing and testing the image processing, image compression and compression analysis algorithms. Specifically, he wrote the source code for the image class, the statistical analysis class and the Huffman coding class.
