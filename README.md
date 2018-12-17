@@ -24,10 +24,14 @@ Goal of this program is to provide users a parallelized image compression servic
 ## Algorithms
 We implemented the following algorithms independently.
 - Parallelized Discrete Cosine Transform(DCT)
-    Accomplished by implementing a block-wise DCT and assign each thread an equal amount of blocks to compress/decompress.    
+
+    We implemented a block-wise DCT and assigned each thread an equal amount of blocks to compress/decompress.    
 - Quantization
+
     We used the standard JPEG quantization matrix and quality ratio formalism to compress information stored in the high frequency Fourier coefficients.
 - Huffman Coding
+
+    The coefficient matrix was scanned in a zigzag fashion(we also stop scanning as soon as we find more than five zero coefficients) and Huffman encoding was used to assign each Fourier coefficient a bit string.
 
 ## Network Programming
 Client-server model with TCP communication protocol was implemented to transfer Huffman codes through an asynchronous network.
@@ -71,6 +75,7 @@ Source code is kept in the `src` directory.
 
 ## Author Contributions
 Luis Aguirre:
+
     As the software architect, Luis is responsible for building and testing of the client-server model and the asynchronous network model. He also designed the GUI of the software. Specifically, he wrote the source code for client class, server class and the gui class.
 
 Yang Wang:
