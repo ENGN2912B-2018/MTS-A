@@ -22,7 +22,7 @@
 Goal of this program is to provide users a parallelized image compression service through an asynchronous network.
 
 ## Algorithms
-We implemented the following algorithms independently.
+We implemented the following algorithms independently:
 - Parallelized Discrete Cosine Transform (DCT)
 
     We implemented a block-wise DCT and assigned each thread an equal amount of blocks to compress/decompress.    
@@ -95,7 +95,7 @@ Source code is kept in the `src` directory.
 - Server folder contains
 
 ## Results and Conclusions
-
+![alt text](https://drive.google.com/uc?export=view&id=1PjaZFFH0vLFriUwQ0Er70t5GbZWQzLmg)
 
 ## Future Work
 - Extend to other file formats such as PNG and JPEG.
@@ -103,8 +103,10 @@ Source code is kept in the `src` directory.
 - Add peer-to-peer network model.
 
 ## Author Contributions
-Luis Aguirre:   
-    As the software architect, Luis was responsible for building and testing of the client-server model and the asynchronous network model. He also designed the GUI of the software. Specifically, he wrote the source code for client class, server class and the gui class.
+Luis Aguirre:     
+
+As the software architect, Luis was responsible for building and testing of the client-server model and the asynchronous network model. He also designed the GUI of the software. Specifically, he wrote the source code for client class, server class and the gui class.
 
 Yang Wang:  
-    As the algorithm engineer, Yang was responsible for designing, implementing and testing the image processing, image compression algorithms. Specifically, he wrote the source code for image compression class, statistical analysis class and Huffman coding class. He also analyzed and quantified the performance of the algorithms (space and time complexities, compression ratio and image quality trade off, sequential compressions etc.) and documented relevant proofs.  
+
+As the algorithm engineer, Yang was responsible for designing, implementing and testing the image processing, image compression algorithms. Specifically, he wrote the source code for image compression class, statistical analysis class and Huffman coding class. He also analyzed and quantified the performance of the algorithms (space and time complexities, compression ratio and image quality trade off, sequential compressions etc.) and documented relevant proofs.  
