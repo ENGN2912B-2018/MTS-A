@@ -194,11 +194,13 @@ bool MainWindow::setupGui() {
 
   // create button for opening image
   QPushButton *openImageBtn = new QPushButton("Open Image", container);
+  openImageBtn->setMinimumSize(1, 35);
   connect(openImageBtn, &QPushButton::clicked, this, &MainWindow::open);
   grid->addWidget(openImageBtn, 6, 1, 1, 1);
 
   // create button for performing compression
   compressBtn = new QPushButton("Compress Image", container);
+  compressBtn->setMinimumSize(1, 35);
   connect(compressBtn, &QPushButton::clicked, this, &MainWindow::compress);
   grid->addWidget(compressBtn, 6, 2, 1, 1);
 
@@ -210,6 +212,7 @@ bool MainWindow::setupGui() {
   grid->addWidget(compressedImageLabel, 1, 5, 3, 3);
 
   QPushButton *saveBtn = new QPushButton("Save Compressed Image", container);
+  saveBtn->setMinimumSize(1, 35);
   connect(saveBtn, &QPushButton::clicked, this, &MainWindow::saveAs);
   grid->addWidget(saveBtn, 6, 5, 1, 1);
 
