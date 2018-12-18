@@ -22,10 +22,10 @@ The goal of this project is to develop a parallelized image compression service 
 We implemented the following algorithms independently:
 - **Parallelized Discrete Cosine Transform (DCT)**
 
-    We implemented a block-wise DCT and assigned each thread an equal amount of blocks to compress/decompress.
+    We implemented a block-wise DCT and assigned each thread an equal amount of blocks to compress/decompress. Parallelization was achieved using [openMP](https://www.openmp.org/).
 - **Quantization**
 
-    The standard JPEG quantization matrix and quality ratio formalism was used to compress information stored in the high frequency Fourier coefficients.
+    The standard JPEG quantization matrix and quality ratio formalism was adopted to compress information stored in the high frequency Fourier coefficients.
 - **Huffman Coding**
 
     The coefficient matrix was scanned in a zigzag fashion (we also stop scanning as soon as we find more than five zero coefficients) before being Huffman encoded and vice versa (Huffman decoding then zigzag unpacking).
@@ -37,7 +37,6 @@ Following figure shows the compressed images with compression of quality ratio 1
 
 ![alt text](https://drive.google.com/uc?export=view&id=1mCTFwoP2i-_JYhazqwzel1KjXjQ5uaH6)
 
-<!-- ![alt text](https://drive.google.com/uc?export=view&id=1lna9IyWstitLYk0Qb2uBVPwlW3qVDl8E) -->
 
 ## Network Programming
 **Client-Server Model & Asynchronous Network**
@@ -60,7 +59,7 @@ Following is a screen shot of the GUI, where the left image is the original PGM 
 ![alt text](https://drive.google.com/uc?export=view&id=1Z7Rzw5FhtaiJNbFLtEGJqIbqc0Bf_4w3)
 
 ## Dependencies and Build Instructions.
-The project is built with CMake and requires [Boost.Asio (v1.63.0)](https://www.boost.org/doc/libs/1_66_0/doc/html/boost_asio.html) for asynchronous networking and the Qt (v5.10.1) for the user interface.
+The project is built with [CMake](https://cmake.org/) and requires [Boost.Asio (v1.63.0)](https://www.boost.org/doc/libs/1_66_0/doc/html/boost_asio.html) for asynchronous networking and the [Qt (v5.10.1)](https://www.qt.io/) for the user interface.
 
 We have tested the software on the following platforms:
 
