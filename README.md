@@ -44,13 +44,13 @@ Software GUI was developed using the QT library. Main functions of the software 
 - Save the decoded and then decompressed file into a directory.
 
 ## Dependencies and Build Instructions.
-The project uses CMake for building and it requires the boost:asio for asynchronous networking and finally, QT library for the user interface.
+The project uses CMake for building and it requires the boost:asio library for asynchronous networking and finally, QT library for the user interface.
 
-We have tested the software on the following systems:
-
+We have tested the software in the following systems:
 **Linux Ubuntu**
-1. Download boost and qt libraries using apt-get pacakge manager:
+1. Download cmake, boost and qt libraries using apt-get pacakge manager:
 ```
+sudo apt-get install cmake -y
 sudo apt-get install libboost-all-dev -y
 sudo apt-get install qt5-default -y
 ```
@@ -61,10 +61,27 @@ cd build
 cmake -D CMAKE_CXX_COMPILER=g++ ..
 make
 ```
-3. Run the executable created in the `build` directory called mainExecutable.
+3. Run `mainExecutable` created in the `build` directory.
 
 **Brown CCV**
-
+1. ssh into a CCV node with the with X11 forwarding enabled. i.e. type in the following command:
+```
+ssh <account_name>@ssh.ccv.brown.edu -X
+```
+2. Load boost and qt libraries to the current node.
+```
+module load gcc/7.2
+module load boost/1.63.0
+module load qt/5.7.0
+```
+3. Build and compile the program by running the following commands after cloning this repo:
+```
+mkdir build
+cd build
+cmake -D CMAKE_CXX_COMPILER=g++ ..
+make
+```
+4. Run `mainExecutable` created in the `build` directory.
 
 
 ## Project Structure
