@@ -47,12 +47,13 @@ Software GUI was developed using the QT library. Main functions of the software 
 The project uses CMake for building and it requires the boost:asio library for asynchronous networking and finally, QT library for the user interface.
 
 We have tested the software in the following systems:
+
 **Linux Ubuntu**
 1. Download cmake, boost and qt libraries using apt-get pacakge manager:
 ```
-sudo apt-get install cmake -y
-sudo apt-get install libboost-all-dev -y
-sudo apt-get install qt5-default -y
+sudo apt-get install cmake
+sudo apt-get install libboost-all-dev
+sudo apt-get install qt5-default
 ```
 2. Build and compile the program by running the following commands after cloning this repo:
 ```
@@ -64,7 +65,7 @@ make
 3. Run `mainExecutable` created in the `build` directory.
 
 **Brown CCV**
-1. ssh into a CCV node with the with X11 forwarding enabled. i.e. type in the following command:
+1. ssh into a CCV node with the with X11 forwarding enabled. i.e. Type in the following command:
 ```
 ssh <account_name>@ssh.ccv.brown.edu -X
 ```
@@ -83,6 +84,7 @@ make
 ```
 4. Run `mainExecutable` created in the `build` directory.
 
+Note that Windows does not support X11 forwarding nor has this project been tested for Windows.
 
 ## Project Structure
 Source code is kept in the `src` directory.
