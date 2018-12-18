@@ -111,8 +111,10 @@ The source code is kept in the `src` directory and split into the following subd
 - `gui`: The gui folder contains the code for the main client (GUI) application. The GUI application connects the networking both the Algorithm and Networking components of the project together through a user interface built with the Qt5 Library.
 
 ## Results and Conclusions
-![alt text](https://drive.google.com/uc?export=view&id=1DqggjnUs2U_s_xnAFs_48H2J4W07tjgY)
-![alt text](https://drive.google.com/uc?export=view&id=11y0lKNbO_Of_JofPzYjP7nRz6S8czA8P)
+
+**Compression Analysis**
+
+![alt text](https://drive.google.com/uc?export=view&id=1K7uSsTgzb6Z3fiSpthnTFwYoeK00K_1k)
 
 ## Future Work
 - Extend the application to support multiple file formats, such as PNG and JPEG.
