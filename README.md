@@ -95,7 +95,8 @@ Source code is kept in the `src` directory.
 - Server folder contains
 
 ## Results and Conclusions
-![alt text](https://drive.google.com/uc?export=view&id=1PjaZFFH0vLFriUwQ0Er70t5GbZWQzLmg)
+![alt text](https://drive.google.com/uc?export=view&id=1DqggjnUs2U_s_xnAFs_48H2J4W07tjgY)
+![alt text](https://drive.google.com/uc?export=view&id=11y0lKNbO_Of_JofPzYjP7nRz6S8czA8P)
 
 ## Future Work
 - Extend to other file formats such as PNG and JPEG.
@@ -103,10 +104,10 @@ Source code is kept in the `src` directory.
 - Add peer-to-peer network model.
 
 ## Author Contributions
-Luis Aguirre:     
+**Luis Aguirre**:     
 
 As the software architect, Luis was responsible for building and testing of the client-server model and the asynchronous network model. He also designed the GUI of the software. Specifically, he wrote the source code for client class, server class and the gui class.
 
-Yang Wang:  
+**Yang Wang**:  
 
 As the algorithm engineer, Yang was responsible for designing, implementing and testing the image processing, image compression algorithms. Specifically, he wrote the source code for image compression class, statistical analysis class and Huffman coding class. He also analyzed and quantified the performance of the algorithms (space and time complexities, compression ratio and image quality trade off, sequential compressions etc.) and documented relevant proofs.  
