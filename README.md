@@ -46,7 +46,7 @@ Software GUI was developed using the QT library. Main functions of the software 
 ## Dependencies and Build Instructions.
 The project uses CMake for building and it requires the boost:asio library for asynchronous networking and finally, QT library for the user interface.
 
-We have tested the software in the following systems:
+We have tested the software on the following systems:
 
 **Linux Ubuntu**
 1. Download cmake, boost and qt libraries using apt-get pacakge manager:
@@ -65,7 +65,7 @@ make
 3. Run `mainExecutable` created in the `build` directory.
 
 **Brown CCV**
-1. ssh into a CCV node with the with X11 forwarding enabled. i.e. Type in the following command:
+1. ssh into a CCV node with X11 forwarding enabled. i.e. Type in the following command:
 ```
 ssh <account_name>@ssh.ccv.brown.edu -X
 ```
@@ -84,15 +84,15 @@ make
 ```
 4. Run `mainExecutable` created in the `build` directory.
 
-Note that Windows does not support X11 forwarding nor has this project been tested for Windows.
+Note that Windows does not support X11 forwarding nor has this project been tested on Windows.
 
 ## Project Structure
 Source code is kept in the `src` directory.
-- image folder contains the main image class used for image processing (read, write) and image compression (parallelized discrete cosine transform, quantization, zigzag scan).
-- algorithm folder contains the code for statistical analysis (MSE and PSNR analysis) and Huffman coding (build Huffman tree, encode and decode).   
-- client folder contains
-- gui folder contains
-- server folder contains
+- Image folder contains the main image class used for image processing (read, write) and image compression (parallelized discrete cosine transform, quantization, zigzag scan).
+- Algorithm folder contains the code for statistical analysis (MSE and PSNR analysis) and Huffman coding (build Huffman tree, encode and decode).   
+- Client folder contains
+- GUI folder contains
+- Server folder contains
 
 ## Results and Conclusions
 
