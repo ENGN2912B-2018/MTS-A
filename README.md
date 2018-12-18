@@ -31,6 +31,7 @@ We implemented the following algorithms independently:
     The coefficient matrix was scanned in a zigzag fashion (we also stop scanning as soon as we find more than five zero coefficients) before being Huffman encoded and vice versa (Huffman decoding then zigzag unpacking).
 
 - **Compression Results**
+
     Following figure shows the compressed images with compression of quality ratio 1, 2, 5, 10, 20, 50, 90, respectively.
 
     ![alt text](https://drive.google.com/uc?export=view&id=1mCTFwoP2i-_JYhazqwzel1KjXjQ5uaH6)
@@ -45,7 +46,9 @@ The software GUI was developed using the Qt5 Widgets library and connects the ot
 - Compress the file and send the Huffman codes through the network to a central server.
 - Save the decoded and then decompressed file into a local directory.
 
-The following is a screen shot of the GUI, where the left image is the original PGM file and the right image is the compressed PGM file with quality ratio of 17 (adjustable within the GUI).
+**GUI Snapshot**.
+
+Following is a screen shot of the GUI, where the left image is the original PGM file and the right image is the compressed PGM file with quality ratio of 17 (adjustable within the GUI).
 
 ![alt text](https://drive.google.com/uc?export=view&id=1Z7Rzw5FhtaiJNbFLtEGJqIbqc0Bf_4w3)
 
