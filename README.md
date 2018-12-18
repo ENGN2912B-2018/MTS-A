@@ -40,7 +40,7 @@ Following figure shows the compressed images with compression of quality ratio 1
 <!-- ![alt text](https://drive.google.com/uc?export=view&id=1lna9IyWstitLYk0Qb2uBVPwlW3qVDl8E) -->
 
 ## Network Programming
-**Client-Server Model**
+**Client-Server Model & Asynchronous Network**
 
 We implemented a Client-Server model using the TCP communication protocol to transfer Huffman codes through an asynchronous network. The Client-Server model allows for simple message transfer and can be easily expanded upon to allow for varying Client and Server operations.
 
@@ -112,7 +112,7 @@ The source code is kept in the `src` directory and split into the following subd
 
 ## Results and Conclusions
 
-**Compression Analysis**
+**Error Analysis & Compression Analysis**
 
 ![alt text](https://drive.google.com/uc?export=view&id=1K7uSsTgzb6Z3fiSpthnTFwYoeK00K_1k)
 
