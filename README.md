@@ -46,7 +46,7 @@ We implemented a Client-Server model using the TCP communication protocol to tra
 ## Software Interface
 **Functionalities**
 
-The software GUI was developed using the Qt5 Widgets library and connects the other components of the project together. The main functions of the application includes:
+The software GUI was developed using the [Qt5 Widgets library](https://doc.qt.io/qt-5.11/qtwidgets-index.html) and connects the other components of the project together. The main functions of the application includes:
 - Load an image file within a given directory into the GUI.
 - Choose a quality ratio before compression.
 - Compress the file and send the Huffman codes through the network to a central server.
@@ -109,11 +109,18 @@ The source code is kept in the `src` directory and split into the following subd
 - `server`: The server folder contains our representation of the server in the Client-Server model. The Server class uses Boost.Asio to accept multiple client connections and send messages to and from the client.
 - `gui`: The gui folder contains the code for the main client (GUI) application. The GUI application connects the networking both the Algorithm and Networking components of the project together through a user interface built with the Qt5 Library.
 
-## Results and Conclusions
-
-**Error Analysis & Compression Analysis**
+## Project Analysis
+The following result was obtained from testing the algorithms on `dog.binary.pgm` file in the `image` folder.
 
 ![alt text](https://drive.google.com/uc?export=view&id=1K7uSsTgzb6Z3fiSpthnTFwYoeK00K_1k)
+
+**Error Analysis**
+
+Left image in the figure above shows the mean squared error(MSE) and peak signal-to-noise ratio for images compressed with various quality ratio. As expected, when quality ratio increases, the error goes down while signal-to-noise ratio gets better.
+
+**Compression Analysis**
+
+The right images shows the dct file size (i.e the file size after we perform dct, quantization and zigzag scan), the Huffman file size (i.e. sum of Huffman bit streams representing each coefficient) and the compression ratio (original file size divided by Huffman file size). 
 
 ## Future Work
 - Extend the application to support multiple file formats, such as PNG and JPEG.
