@@ -43,19 +43,29 @@ Software GUI was developed using the QT library. Main functions of the software 
 - Compress the file and send the Huffman codes through the network.
 - Save the decoded and then decompressed file into a directory.
 
-## Build Instructions and Testing.
-The project uses CMake for building and it has been tested on Linux systems.
-To build and compile the program, you can run the following from the 'src' directory.
+## Dependencies and Build Instructions.
+The project uses CMake for building and it requires the boost:asio for asynchronous networking and finally, QT library for the user interface.
+
+We have tested the software on the following systems:
+
+**Linux Ubuntu**
+1. Download boost and qt libraries using apt-get pacakge manager:
+```
+sudo apt-get install libboost-all-dev -y
+sudo apt-get install qt5-default -y
+```
+2. Build and compile the program by running the following commands after cloning this repo:
 ```
 mkdir build
 cd build
 cmake -D CMAKE_CXX_COMPILER=g++ ..
 make
 ```
-Then run the executable to use the software.
+3. Run the executable created in the `build` directory called mainExecutable.
 
-## Dependencies
-The project depends on Boost ASIO library for asynchronous networking and QT library for user interface. It has been tested with Boost 1.63.0 and is expected to work with more recent versions.
+**Brown CCV**
+
+
 
 ## Project Structure
 Source code is kept in the `src` directory.
