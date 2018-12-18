@@ -44,7 +44,7 @@ Software GUI was developed using the QT library. Main functions of the software 
 - Save the decoded and then decompressed file into a directory.
 
 Following is a screen shot of the GUI, where the left image in the GUI is the original PGM file and the right image in the GUI is the compressed PGM file with quality ratio of 8(adjustable within the GUI).
-![alt text](https://drive.google.com/uc?export=view&id=1W-FjME4PIWIParbmmCC2_-gK6O3IPK0G)
+![alt text](https://drive.google.com/uc?export=view&id=1Z7Rzw5FhtaiJNbFLtEGJqIbqc0Bf_4w3)
 
 ## Dependencies and Build Instructions.
 The project uses CMake for building and it requires the boost:asio library for asynchronous networking and finally, QT library for the user interface.
