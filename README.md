@@ -111,9 +111,9 @@ The source code is kept in the `src` directory and split into the following subd
 
 The overall relationship between the classes of the project can be described by the following UML diagram:
 
-![UML Diagram](https://drive.google.com/open?id=1zkry8l5zrS_flQe646YP8pLvAYFiB2zx)
+![UML Diagram](https://drive.google.com/file/d/1zkry8l5zrS_flQe646YP8pLvAYFiB2zx/view?usp=sharing)
 
-## Results & Analysiss
+## Results & Analysis
 The following result was obtained from testing the algorithms on `dog.binary.pgm` file in the `image` folder.
 
 ![Statistical Results](https://drive.google.com/uc?export=view&id=1K7uSsTgzb6Z3fiSpthnTFwYoeK00K_1k)
