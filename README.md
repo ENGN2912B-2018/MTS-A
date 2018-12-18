@@ -15,9 +15,6 @@
     Software Architect:
     Luis Aguirre, luis_aguirre@brown.edu
 
-**Copyright:**
-
-
 ## Introduction
 The goal of this project is to develop a parallelized image compression service that allows for image transfer through an asynchronous network.
 
@@ -93,10 +90,10 @@ Note that Windows does not support X11 forwarding by default, nor has this proje
 ## Project Structure
 The source code is kept in the `src` directory and split into the following subdirectories:
 - `image`: The image folder contains the main Image class used for image processing (reading & writing) and compression (parallelized discrete cosine transform, quantization, zigzag scan).
-- 'algorithm': The algorithm folder contains the code for our statistical analysis (MSE and PSNR analysis) and performing Huffman encoding and decoding.
-- 'client': The client folder contains our representation of the client in the Client-Server model. The Client class uses Boost.Asio to allow for message sending to and from the server.
-- 'server': The server folder contains our representation of the server in the Client-Server model. The Server class uses Boost.Asio to accept multiple client connections and send messages to and from the client.
-- 'gui': The gui folder contains the code for the main client (GUI) application. The GUI application connects the networking both the Algorithm and Networking components of the project together through a user interface built with the Qt5 Library.
+- `algorithm`: The algorithm folder contains the code for our statistical analysis (MSE and PSNR analysis) and performing Huffman encoding and decoding.
+- `client`: The client folder contains our representation of the client in the Client-Server model. The Client class uses Boost.Asio to allow for message sending to and from the server.
+- `server`: The server folder contains our representation of the server in the Client-Server model. The Server class uses Boost.Asio to accept multiple client connections and send messages to and from the client.
+- `gui`: The gui folder contains the code for the main client (GUI) application. The GUI application connects the networking both the Algorithm and Networking components of the project together through a user interface built with the Qt5 Library.
 
 ## Results and Conclusions
 ![alt text](https://drive.google.com/uc?export=view&id=1DqggjnUs2U_s_xnAFs_48H2J4W07tjgY)
