@@ -43,7 +43,8 @@ Software GUI was developed using the QT library. Main functions of the software 
 - Compress the file and send the Huffman codes through the network.
 - Save the decoded and then decompressed file into a directory.
 
-Following is a screen shot of the GUI, where the left image in the GUI is the original PGM file and the right image in the GUI is the compressed PGM file with quality ratio of 8(adjustable within the GUI).
+Following is a screen shot of the GUI, where the left image in the GUI is the original PGM file and the right image in the GUI is the compressed PGM file with quality ratio of 17(adjustable within the GUI).
+
 ![alt text](https://drive.google.com/uc?export=view&id=1Z7Rzw5FhtaiJNbFLtEGJqIbqc0Bf_4w3)
 
 ## Dependencies and Build Instructions.
