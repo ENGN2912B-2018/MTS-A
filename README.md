@@ -23,13 +23,13 @@ Goal of this program is to provide users a parallelized image compression servic
 
 ## Algorithms
 We implemented the following algorithms independently:
-- Parallelized Discrete Cosine Transform (DCT)
+- **Parallelized Discrete Cosine Transform (DCT)**
 
     We implemented a block-wise DCT and assigned each thread an equal amount of blocks to compress/decompress.    
-- Quantization
+- **Quantization**
 
     The standard JPEG quantization matrix and quality ratio formalism was used to compress information stored in the high frequency Fourier coefficients.
-- Huffman Coding
+- **Huffman Coding**
 
     The coefficient matrix was scanned in a zigzag fashion (we also stop scanning as soon as we find more than five zero coefficients) before being Huffman encoded and vice versa (Huffman decoding then zigzag unpacking).
 
@@ -42,6 +42,9 @@ Software GUI was developed using the QT library. Main functions of the software 
 - Choose a quality ratio before compression.
 - Compress the file and send the Huffman codes through the network.
 - Save the decoded and then decompressed file into a directory.
+
+Following is a screen shot of the GUI, where the left image in the GUI is the original PGM file and the right image in the GUI is the compressed PGM file with quality ratio of 8(adjustable within the GUI).
+![alt text](https://drive.google.com/uc?export=view&id=1W-FjME4PIWIParbmmCC2_-gK6O3IPK0G)
 
 ## Dependencies and Build Instructions.
 The project uses CMake for building and it requires the boost:asio library for asynchronous networking and finally, QT library for the user interface.
