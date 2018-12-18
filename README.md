@@ -30,7 +30,7 @@ We implemented the following algorithms independently:
 
     The coefficient matrix was scanned in a zigzag fashion (we also stop scanning as soon as we find more than five zero coefficients) before being Huffman encoded and vice versa (Huffman decoding then zigzag unpacking).
 
-- **Compression Results**
+**Compression Algorithm Showcase**
 
     Following figure shows the compressed images with compression of quality ratio 1, 2, 5, 10, 20, 50, 90, respectively.
 
@@ -40,6 +40,8 @@ We implemented the following algorithms independently:
 We implemented a Client-Server model using the TCP communication protocol to transfer Huffman codes through an asynchronous network. The Client-Server model allows for simple message transfer and can be easily expanded upon to allow for varying Client and Server operations.
 
 ## Software Interface
+**Functionalities**
+
 The software GUI was developed using the Qt5 Widgets library and connects the other components of the project together. The main functions of the application includes:
 - Load an image file within a given directory into the GUI.
 - Choose a quality ratio before compression.
