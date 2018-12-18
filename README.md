@@ -33,7 +33,7 @@ We implemented the following algorithms independently:
 
 **Algorithm Showcase**  
 
-Following figure shows the compressed images(in `image` folder) with compression of quality ratio 1, 2, 5, 10, 20, 50, 90, respectively.
+Following figure shows the compressed images with compression of quality ratio 1, 2, 5, 10, 20, 50, 90, respectively. Files are contained in the `image` folder.
 
 ![alt text](https://drive.google.com/uc?export=view&id=1mCTFwoP2i-_JYhazqwzel1KjXjQ5uaH6)
 
