@@ -31,7 +31,7 @@ We implemented the following algorithms independently:
     The coefficient matrix was scanned in a zigzag fashion (we also stop scanning as soon as we find more than five zero coefficients) before being Huffman encoded and vice versa (Huffman decoding then zigzag unpacking).
 
 
-**Algorithm Showcase**  
+**Algorithm Showcase**
 
 Following figure shows the compressed images with compression of quality ratio 1, 2, 5, 10, 20, 50, 90, respectively. Files are contained in the `image` folder.
 
@@ -52,7 +52,7 @@ The software GUI was developed using the [Qt5 Widgets library](https://doc.qt.io
 - Compress the file and send the Huffman codes through the network to a central server.
 - Save the decoded and then decompressed file into a local directory.
 
-**GUI Snapshot**  
+**GUI Snapshot**
 
 Following is a screen shot of the GUI, where the left image is the original PGM file and the right image is the compressed PGM file with quality ratio of 17 (adjustable within the GUI). Files are contained in the `image` folder.
 
@@ -109,10 +109,14 @@ The source code is kept in the `src` directory and split into the following subd
 - `server`: The server folder contains our representation of the server in the Client-Server model. The Server class uses Boost.Asio to accept multiple client connections and send messages to and from the client.
 - `gui`: The gui folder contains the code for the main client (GUI) application. The GUI application connects the networking both the Algorithm and Networking components of the project together through a user interface built with the Qt5 Library.
 
+The overall relationship between the classes of the project can be described by the following UML diagram:
+
+![UML Diagram](https://drive.google.com/open?id=1zkry8l5zrS_flQe646YP8pLvAYFiB2zx)
+
 ## Results & Analysiss
 The following result was obtained from testing the algorithms on `dog.binary.pgm` file in the `image` folder.
 
-![alt text](https://drive.google.com/uc?export=view&id=1K7uSsTgzb6Z3fiSpthnTFwYoeK00K_1k)
+![Statistical Results](https://drive.google.com/uc?export=view&id=1K7uSsTgzb6Z3fiSpthnTFwYoeK00K_1k)
 
 **Error Analysis**
 
