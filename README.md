@@ -16,7 +16,7 @@
     Luis Aguirre, luis_aguirre@brown.edu
 
 ## Introduction
-The goal of this project is to develop a parallelized image compression service that allows for image transfer through an asynchronous network.
+The goal of this project is to develop a parallelized image compression service that allows for image transfer through an asynchronous TCP network.
 
 ## Algorithms
 We implemented the following algorithms independently:
@@ -103,15 +103,17 @@ Note that Windows does not support X11 forwarding by default, nor has this proje
 
 ## Project Structure
 The source code is kept in the `src` directory and split into the following subdirectories:
-- `image`: The image folder contains the main Image class used for image processing (reading & writing) and compression (parallelized discrete cosine transform, quantization, zigzag scan).
+- `image`: The image folder contains the main Image class used for image processing (reading, writing) and compression (parallelized discrete cosine transform, quantization, zigzag scan).
 - `algorithm`: The algorithm folder contains the code for our statistical analysis (MSE and PSNR analysis) and performing Huffman encoding and decoding.
 - `client`: The client folder contains our representation of the client in the Client-Server model. The Client class uses Boost.Asio to allow for message sending to and from the server.
 - `server`: The server folder contains our representation of the server in the Client-Server model. The Server class uses Boost.Asio to accept multiple client connections and send messages to and from the client.
-- `gui`: The gui folder contains the code for the main client (GUI) application. The GUI application connects the networking both the Algorithm and Networking components of the project together through a user interface built with the Qt5 Library.
+- `gui`: The gui folder contains the code for the main client (GUI) application. The GUI application connects the algorithm and networking components of the project together through a user interface built with the Qt5 Library.
 
-The overall relationship between the classes of the project can be described by the following UML diagram:
+The overall relationship between the classes written for this project can be described by the following UML diagram:
 
 ![UML Diagram](https://drive.google.com/uc?export=view&id=1zkry8l5zrS_flQe646YP8pLvAYFiB2zx)
+
+Note that the relationship between these classes and our external dependencies are not fully described in the above diagram.
 
 ## Results & Analysis
 The following result was obtained from testing the algorithms on `dog.binary.pgm` file in the `image` folder.
@@ -120,7 +122,7 @@ The following result was obtained from testing the algorithms on `dog.binary.pgm
 
 **Error Analysis**
 
-Left image in the figure above shows the mean squared error(MSE) and peak signal-to-noise ratio for images compressed with various quality ratio. As expected, when quality ratio increases, the error goes down while signal-to-noise ratio gets better.
+The left image in the figure above shows the mean squared error (MSE) and peak signal-to-noise ratio (PSNR) for images compressed with various quality ratio. As expected, as the quality ratio increases, the MSE decreases while the PSNR increases.
 
 **Compression Analysis**
 
@@ -134,7 +136,7 @@ The right images shows the dct file size (i.e the file size after we perform dct
 ## Author Contributions
 **Luis Aguirre**:
 
-As the software architect, Luis was responsible for building and testing of the client-server model and the asynchronous network model. He also implemented the GUI application of the software and combined each component of the project to work together in the final application. Specifically, he wrote the source code for the `client` class, the `server` class and the `gui` class.
+As the software architect, Luis was responsible for building and testing of the client-server model and the asynchronous network model. He also implemented the GUI application of the software and combined each component of the project to work together in the final application. Specifically, he wrote the source code in the `client`, `server`, and `gui` namespaces.
 
 **Yang Wang**:
 
