@@ -116,7 +116,7 @@ The overall relationship between the classes written for this project can be des
 Note that the relationship between these classes and our external dependencies are not fully described in the above diagram.
 
 ## Results & Analysis
-Following figure shows the performance of our compression algorithm in terms of error analysis and compression analysis. Image used for these analysis was `dog.binary.pgm` in the `image` folder.
+Following figure shows the performance of our compression algorithm in terms of error analysis, compression analysis and latency analysis. Image used for these analysis was `dog.binary.pgm` in the `image` folder.
 
 ![Statistical Results](https://drive.google.com/uc?export=view&id=1K7uSsTgzb6Z3fiSpthnTFwYoeK00K_1k)
 
@@ -128,7 +128,7 @@ The left image in the figure above shows the mean squared error (MSE) and peak s
 
 The right image shows the dct file size (i.e the file size after we performed dct, quantization and zigzag scan), the Huffman file size (i.e. sum of Huffman bit streams representing each coefficient) and the compression ratio (original file size divided by Huffman file size) for different quality ratios. The important point here is that the compression ratio grows almost exponentially at low quality ratios but it is still bounded and depends on the specific quantization matrix used. (Think about the case of maximum compression, where we only need to use the average intensity(1 coefficient) to represent each block.)
 
-**Time Analysis**
+**Latency Analysis**
 
 By parallelizing the forward and inverse dct algorithms (which are both quadratic in (m*n) where m is the height of the block and n is the width of the block), the latency decreases linearly with respective to the number of threads set using [openMP](https://www.openmp.org/).
 
