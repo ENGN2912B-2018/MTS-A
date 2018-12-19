@@ -33,7 +33,7 @@ We implemented the following algorithms independently:
 
 **Algorithm Showcase**
 
-Following figure shows the compressed images with quality ratio of 1, 2, 5, 10, 20, 50, 90, respectively. Files are stored in the `image` folder.
+Following figure shows the compressed images with quality ratio of 1, 2, 5, 10, 20, 50, 90, respectively.
 
 ![alt text](https://drive.google.com/uc?export=view&id=1mCTFwoP2i-_JYhazqwzel1KjXjQ5uaH6)
 
@@ -54,7 +54,7 @@ The software GUI was developed using the [Qt5 Widgets library](https://doc.qt.io
 
 **GUI Snapshot**
 
-Following is a screen shot of the GUI, where the left image is the original PGM file and the right image is the compressed PGM file with quality ratio of 17 (adjustable within the GUI). Files are contained in the `image` folder.
+Following is a screen shot of the GUI, where the left image is the original PGM file and the right image is the compressed PGM file with quality ratio of 17 (adjustable within the GUI).
 
 ![alt text](https://drive.google.com/uc?export=view&id=1Z7Rzw5FhtaiJNbFLtEGJqIbqc0Bf_4w3)
 
@@ -116,7 +116,7 @@ The overall relationship between the classes written for this project can be des
 Note that the relationship between these classes and our external dependencies are not fully described in the above diagram.
 
 ## Results & Analysis
-Following figure shows the performance of our compression algorithm in terms of error analysis and compression analysis.
+Following figure shows the performance of our compression algorithm in terms of error analysis and compression analysis. Image used for these analysis was `dog.binary.pgm` in the `image` folder.
 
 ![Statistical Results](https://drive.google.com/uc?export=view&id=1K7uSsTgzb6Z3fiSpthnTFwYoeK00K_1k)
 
