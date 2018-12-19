@@ -111,7 +111,7 @@ The source code is kept in the `src` directory and split into the following subd
 
 The overall relationship between the classes written for this project can be described by the following UML diagram:
 
-![UML Diagram](https://drive.google.com/uc?export=view&id=1zkry8l5zrS_flQe646YP8pLvAYFiB2zx)
+![UML Diagram](https://drive.google.com/uc?export=view&id=1o2gVhemj3gtdfGjETxDOordQ46kJHRVc)
 
 Note that the relationship between these classes and our external dependencies are not fully described in the above diagram.
 
