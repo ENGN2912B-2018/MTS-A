@@ -33,7 +33,7 @@ We implemented the following algorithms independently:
 
 **Algorithm Showcase**
 
-Following figure shows the compressed images with compression of quality ratio 1, 2, 5, 10, 20, 50, 90, respectively. Files are contained in the `image` folder.
+Following figure shows the compressed images with quality ratio of 1, 2, 5, 10, 20, 50, 90, respectively. Files are stored in the `image` folder.
 
 ![alt text](https://drive.google.com/uc?export=view&id=1mCTFwoP2i-_JYhazqwzel1KjXjQ5uaH6)
 
@@ -116,17 +116,17 @@ The overall relationship between the classes written for this project can be des
 Note that the relationship between these classes and our external dependencies are not fully described in the above diagram.
 
 ## Results & Analysis
-The following result was obtained from testing the algorithms on `dog.binary.pgm` file in the `image` folder.
+The following results were obtained from testing our algorithm on `dog.binary.pgm` file in the `image` folder.
 
 ![Statistical Results](https://drive.google.com/uc?export=view&id=1K7uSsTgzb6Z3fiSpthnTFwYoeK00K_1k)
 
 **Error Analysis**
 
-The left image in the figure above shows the mean squared error (MSE) and peak signal-to-noise ratio (PSNR) for images compressed with various quality ratio. As expected, as the quality ratio increases, the MSE decreases while the PSNR increases.
+The left image in the figure above shows the mean squared error (MSE) and peak signal-to-noise ratio (PSNR) for images compressed with various quality ratios. As the quality ratio increases, the MSE decreases while the PSNR increases.
 
 **Compression Analysis**
 
-The right images shows the dct file size (i.e the file size after we perform dct, quantization and zigzag scan), the Huffman file size (i.e. sum of Huffman bit streams representing each coefficient) and the compression ratio (original file size divided by Huffman file size).
+The right image shows the dct file size (i.e the file size after we performed dct, quantization and zigzag scan), the Huffman file size (i.e. sum of Huffman bit streams representing each coefficient) and the compression ratio (original file size divided by Huffman file size). The important point here is that the image gets
 
 ## Future Work
 - Extend the application to support multiple file formats, such as PNG and JPEG.
@@ -140,4 +140,4 @@ As the software architect, Luis was responsible for building and testing of the 
 
 **Yang Wang**:
 
-As the algorithm engineer, Yang was responsible for designing, implementing and testing the image processing, image compression algorithms. Specifically, he wrote the source code for `image` class, `statistical analysis` class and `Huffman coding` class. He also analyzed and quantified the performance of the algorithms (space and time complexities, compression ratio and image quality trade off, sequential compressions etc.) and documented relevant proofs.
+As the algorithm engineer, Yang was responsible for designing, implementing and testing the image processing and image compression algorithms. Specifically, he wrote the source code for `image` class, `statistical analysis` class and `Huffman coding` class. He also tested the software on different platforms(Ubuntu and Brown CCV), and he analyzed and quantified the performance of the algorithms (space and time complexities, compression ratio and image quality trade off, sequential compression analysis etc.).
