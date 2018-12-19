@@ -22,13 +22,13 @@ The goal of this project is to develop a parallelized image compression service 
 We implemented the following algorithms independently:
 - **Parallelized Discrete Cosine Transform (DCT)**
 
-    We implemented a block-wise DCT and assigned each thread an equal amount of blocks to compress/decompress. Parallelization was achieved using [openMP](https://www.openmp.org/).
+    We implemented a block-wise DCT and assigned each thread equal workload during compression and decompression. Parallelization was achieved using [openMP](https://www.openmp.org/).
 - **Quantization**
 
     The standard JPEG quantization matrix and quality ratio formalism was adopted to compress information stored in the high frequency Fourier coefficients.
 - **Huffman Coding**
 
-    The coefficient matrix was scanned in a zigzag fashion before being Huffman encoded and vice versa (Huffman decoding then zigzag unpacking).
+    The coefficient matrix was scanned in a zigzag fashion(until we have obtained five zero coefficients in each block) before being Huffman encoded and vice versa (Huffman decoding then zigzag unpacking).
 
 
 **Algorithm Showcase**
@@ -127,6 +127,11 @@ The left image in the figure above shows the mean squared error (MSE) and peak s
 **Compression Analysis**
 
 The right image shows the dct file size (i.e the file size after we performed dct, quantization and zigzag scan), the Huffman file size (i.e. sum of Huffman bit streams representing each coefficient) and the compression ratio (original file size divided by Huffman file size) for different quality ratios. The important point here is that the compression ratio grows almost exponentially at low quality ratios but it is still bounded and depends on the specific quantization matrix used. (Think about the case of maximum compression, where we only need to use the average intensity(1 coefficient) to represent each block.)
+
+**Time Analysis**
+
+By parallelizing the forward and inverse dct algorithms (which are both quadratic in (m*n) where m is the height of the block and n is the width of the block), the latency decreases linearly with respective to the number of threads set using [openMP](https://www.openmp.org/).
+
 
 ## Future Work
 - Extend the application to support multiple file formats, such as PNG and JPEG.
