@@ -1,7 +1,7 @@
 # Parallel Image Compression Through Networks
 **Course Information:**
 
-    ENGN 2610B - Scientific Computing in C++
+    ENGN 2912B - Scientific Computing in C++
     Fall 2018, Brown University
     December, 2018
 
